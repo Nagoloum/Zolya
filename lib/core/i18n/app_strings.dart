@@ -170,4 +170,87 @@ abstract class AppStrings {
   String get paymentAddCta;
   String get paymentAddedTitle;
   String get paymentAddedMessage;
+
+  // Common
+  String get commonYes;
+  String get commonNo;
+  String get commonShare;
+  String get commonEdit;
+  String get commonSave;
+  String get commonCancel;
+  String get commonClose;
+  String get commonRetry;
+
+  // Profile (Account screen)
+  String get profileTitle;
+  String get sectionMySales;
+  String get sectionMyPurchases;
+  String get sectionAccount;
+  String get sectionHelp;
+  String get sectionPreferences;
+  String get sectionLegal;
+  String get menuMyArticles;
+  String get menuMyDiscounts;
+  String get menuSalesHistory;
+  String get menuFavorites;
+  String get menuPurchaseHistory;
+  String get menuMyOffers;
+  String get menuPersonalInfo;
+  String get menuMyAddresses;
+  String get menuPaymentMethods;
+  String get menuWallet;
+  String get menuNotifications;
+  String get menuFaq;
+  String get menuContactUs;
+  String get menuRateApp;
+  String get menuInviteFriend;
+  String get menuInviteEarn;
+  String get menuSettings;
+  String get menuTerms;
+  String get menuPrivacy;
+  String get menuCookies;
+  String get menuAboutZolya;
+  String get menuLogout;
+  String get walletShortcut;
+
+  // Profile / About tab
+  String get profileTabListings;
+  String get profileTabReviews;
+  String get profileTabAbout;
+  String get profileNoListingsTitle;
+  String get profileNoListingsBody;
+  String get profileNoListingsCta;
+  String get profileStatArticles;
+  String get profileStatSales;
+  String get profileStatFollowers;
+  String get aboutBioTitle;
+  String get aboutPersonalInfo;
+  String get aboutUsername;
+  String get aboutPhone;
+  String get aboutEmail;
+  String get aboutLocation;
+  String get aboutMemberSince;
+  String get aboutVerified;
+  String get aboutBioDefault;
+
+  // Edit profile
+  String get editProfileTitle;
+  String get editProfileSection;
+  String get editProfileFullName;
+  String get editProfileFullNameHint;
+  String get editProfileFieldRequired;
+  String get editProfilePhone;
+  String get editProfileEmail;
+  String get editProfileEmailHint;
+  String get editProfileCity;
+  String get editProfileCityHint;
+  String get editProfileBio;
+  String get editProfileBioHint;
+  String get editProfileSaved;
+
+  // Settings — appearance
+  String get settingsAppearance;
+  String get settingsThemeLight;
+  String get settingsThemeDark;
+  String get settingsThemeSystem;
 }

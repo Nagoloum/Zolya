@@ -40,14 +40,14 @@ class SettingsScreen extends StatelessWidget {
             ),
             const SizedBox(height: ZolyaSpacing.xxl),
             _SectionHeader(
-              title: 'Appearance',
+              title: l.settingsAppearance,
               mutedColor: mutedColor,
             ),
             const SizedBox(height: ZolyaSpacing.md),
-            const ZolyaThemeSwitcher(
-              lightLabel: 'Light',
-              darkLabel: 'Dark',
-              systemLabel: 'System',
+            ZolyaThemeSwitcher(
+              lightLabel: l.settingsThemeLight,
+              darkLabel: l.settingsThemeDark,
+              systemLabel: l.settingsThemeSystem,
             ),
             const SizedBox(height: ZolyaSpacing.xl),
           ],

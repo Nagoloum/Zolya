@@ -14,18 +14,18 @@ class CreateListingScreen extends StatelessWidget {
   const CreateListingScreen({super.key});
 
   static const _categories = [
-    'Hauts',
+    'Tops',
     'Bas',
-    'Robes',
-    'Chaussures',
-    'Accessoires',
+    'Dresses',
+    'Shoes',
+    'Accessories',
     'Sacs',
   ];
 
   static const _conditionLabels = {
     ProductCondition.neuf: 'Neuf',
-    ProductCondition.veryGood: 'Très bon état',
-    ProductCondition.good: 'Bon état',
+    ProductCondition.veryGood: 'Very good',
+    ProductCondition.good: 'Good',
     ProductCondition.acceptable: 'Acceptable',
   };
 
@@ -44,7 +44,7 @@ class CreateListingScreen extends StatelessWidget {
           }
           if (state.status == CreateListingStatus.success) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Article publié')),
+              const SnackBar(content: Text('Article published')),
             );
             if (context.canPop()) {
               context.pop();
@@ -62,7 +62,7 @@ class CreateListingScreen extends StatelessWidget {
     final cubit = context.read<CreateListingCubit>();
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: const ZolyaTopBar(title: 'Publier un article', centerTitle: true),
+      appBar: const ZolyaTopBar(title: 'New listing', centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(ZolyaSpacing.lg),
         child: Column(
@@ -80,8 +80,8 @@ class CreateListingScreen extends StatelessWidget {
             ),
             const SizedBox(height: ZolyaSpacing.xl),
             ZolyaTextField(
-              label: 'Titre',
-              placeholder: 'Ex: Robe fleurie taille M',
+              label: 'Title',
+              placeholder: 'Ex: Floral dress, size M',
               initialValue: state.title,
               onChanged: cubit.setTitle,
             ),
@@ -89,20 +89,20 @@ class CreateListingScreen extends StatelessWidget {
             ZolyaTextarea(
               label: 'Description',
               placeholder:
-                  'Décrivez votre article (marque, état, défauts...)',
+                  'Describe your item (brand, condition, flaws...)',
               initialValue: state.description,
               onChanged: cubit.setDescription,
             ),
             const SizedBox(height: ZolyaSpacing.lg),
             ZolyaTextField(
-              label: 'Prix (FCFA)',
+              label: 'Price (FCFA)',
               placeholder: 'Ex: 5000',
               initialValue: state.price,
               keyboardType: TextInputType.number,
               onChanged: cubit.setPrice,
             ),
             const SizedBox(height: ZolyaSpacing.lg),
-            const _SectionLabel('Catégorie'),
+            const _SectionLabel('Category'),
             const SizedBox(height: ZolyaSpacing.sm),
             Wrap(
               spacing: 8,
@@ -116,7 +116,7 @@ class CreateListingScreen extends StatelessWidget {
                   .toList(),
             ),
             const SizedBox(height: ZolyaSpacing.lg),
-            const _SectionLabel('État'),
+            const _SectionLabel('Condition'),
             const SizedBox(height: ZolyaSpacing.sm),
             Wrap(
               spacing: 8,
@@ -131,14 +131,14 @@ class CreateListingScreen extends StatelessWidget {
             ),
             const SizedBox(height: ZolyaSpacing.lg),
             ZolyaTextField(
-              label: 'Taille (optionnel)',
+              label: 'Size (optional)',
               placeholder: 'S, M, L, 38, 42...',
               initialValue: state.size,
               onChanged: cubit.setSize,
             ),
             const SizedBox(height: ZolyaSpacing.xxl),
             ZolyaButton(
-              label: 'Publier l\'article',
+              label: 'Publish article',
               onPressed: state.isSubmitting ? null : cubit.submit,
               loading: state.isSubmitting,
               expand: true,

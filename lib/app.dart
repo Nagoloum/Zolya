@@ -8,7 +8,9 @@ import 'theme/zolya_theme.dart';
 import 'core/i18n/locale_provider.dart';
 import 'domain/repositories/auth_repository.dart';
 import 'domain/repositories/delivery_repository.dart';
+import 'domain/repositories/discount_repository.dart';
 import 'domain/repositories/favorite_repository.dart';
+import 'domain/repositories/offer_repository.dart';
 import 'domain/repositories/order_repository.dart';
 import 'domain/repositories/product_repository.dart';
 import 'domain/usecases/auth/send_otp_usecase.dart';
@@ -19,7 +21,10 @@ import 'domain/usecases/products/get_products_usecase.dart';
 import 'domain/usecases/orders/create_order_usecase.dart';
 import 'presentation/bloc/auth/auth_bloc.dart';
 import 'presentation/bloc/delivery/delivery_bloc.dart';
+import 'presentation/bloc/discounts/discounts_cubit.dart';
 import 'presentation/bloc/favorites/favorites_cubit.dart';
+import 'presentation/bloc/follow/follow_cubit.dart';
+import 'presentation/bloc/offers/offers_cubit.dart';
 import 'presentation/bloc/order/order_bloc.dart';
 import 'presentation/bloc/product/product_bloc.dart';
 import 'presentation/bloc/theme/theme_cubit.dart';
@@ -59,6 +64,15 @@ class ZolyaApp extends StatelessWidget {
         ),
         BlocProvider<FavoritesCubit>(
           create: (_) => FavoritesCubit(repo: sl<FavoriteRepository>())..load(),
+        ),
+        BlocProvider<OffersCubit>(
+          create: (_) => OffersCubit(repo: sl<OfferRepository>()),
+        ),
+        BlocProvider<DiscountsCubit>(
+          create: (_) => DiscountsCubit(repo: sl<DiscountRepository>()),
+        ),
+        BlocProvider<FollowCubit>(
+          create: (_) => FollowCubit(),
         ),
         BlocProvider<ThemeCubit>(
           create: (_) => ThemeCubit()..load(),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'route_names.dart';
+import 'page_transition.dart';
 import '../../presentation/screens/splash/splash_screen.dart';
 import '../../presentation/screens/get_started/get_started_screen.dart';
 import '../../presentation/screens/auth/login_screen.dart';
@@ -27,6 +28,18 @@ import '../../presentation/screens/settings/settings_screen.dart';
 import '../../presentation/screens/reviews/reviews_screen.dart';
 import '../../presentation/screens/address/address_list_screen.dart';
 import '../../presentation/screens/payment_method/payment_method_screen.dart';
+import '../../presentation/screens/seller/seller_profile_screen.dart';
+import '../../presentation/screens/favorites/favorites_screen.dart';
+import '../../presentation/screens/wallet/wallet_screen.dart';
+import '../../presentation/screens/help/faq_screen.dart';
+import '../../presentation/screens/help/contact_support_screen.dart';
+import '../../presentation/screens/discounts/discounts_screen.dart';
+import '../../presentation/screens/profile/edit_profile_screen.dart';
+import '../../presentation/screens/profile/my_profile_screen.dart';
+import '../../presentation/screens/sell/my_listings_screen.dart';
+import '../../presentation/screens/offers/my_offers_screen.dart';
+import '../../presentation/screens/about/about_zolya_screen.dart';
+import '../../presentation/screens/invite/invite_friends_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: RouteNames.splash,
@@ -42,123 +55,184 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: RouteNames.login,
-      builder: (_, __) => const LoginScreen(),
+      pageBuilder: zolyaPageBuilderSimple(() => const LoginScreen()),
     ),
     GoRoute(
       path: RouteNames.register,
-      builder: (_, __) => const RegisterScreen(),
+      pageBuilder: zolyaPageBuilderSimple(() => const RegisterScreen()),
     ),
     GoRoute(
       path: RouteNames.otp,
-      builder: (context, state) {
+      pageBuilder: zolyaPageBuilder((context, state) {
         final phone = state.uri.queryParameters['phone'] ?? '';
         return OtpScreen(phone: phone);
-      },
+      }),
     ),
     GoRoute(
       path: RouteNames.forgotPassword,
-      builder: (_, __) => const ForgotPasswordScreen(),
+      pageBuilder:
+          zolyaPageBuilderSimple(() => const ForgotPasswordScreen()),
     ),
     GoRoute(
       path: RouteNames.forgotPasswordCode,
-      builder: (context, state) {
+      pageBuilder: zolyaPageBuilder((context, state) {
         final phone = state.uri.queryParameters['phone'] ?? '';
         return ResetCodeScreen(phone: phone);
-      },
+      }),
     ),
     GoRoute(
       path: RouteNames.forgotPasswordReset,
-      builder: (context, state) {
+      pageBuilder: zolyaPageBuilder((context, state) {
         final phone = state.uri.queryParameters['phone'] ?? '';
         final code = state.uri.queryParameters['code'] ?? '';
         return ResetPasswordScreen(phone: phone, code: code);
-      },
+      }),
     ),
     ShellRoute(
       builder: (context, state, child) => HomeScreen(child: child),
       routes: [
         GoRoute(
           path: RouteNames.marketplace,
-          builder: (_, __) => const MarketplaceScreen(),
+          pageBuilder: zolyaPageBuilderSimple(() => const MarketplaceScreen()),
         ),
         GoRoute(
           path: RouteNames.search,
-          builder: (_, __) => const SearchScreen(),
+          pageBuilder: zolyaPageBuilderSimple(() => const SearchScreen()),
         ),
         GoRoute(
           path: RouteNames.orders,
-          builder: (_, __) => const OrdersScreen(),
+          pageBuilder: zolyaPageBuilderSimple(() => const OrdersScreen()),
           routes: [
             GoRoute(
               path: ':id',
-              builder: (context, state) => OrderDetailScreen(
-                orderId: state.pathParameters['id']!,
+              pageBuilder: zolyaPageBuilder(
+                (context, state) => OrderDetailScreen(
+                  orderId: state.pathParameters['id']!,
+                ),
               ),
             ),
           ],
         ),
         GoRoute(
           path: RouteNames.profile,
-          builder: (_, __) => const ProfileScreen(),
+          pageBuilder: zolyaPageBuilderSimple(() => const ProfileScreen()),
         ),
         GoRoute(
           path: RouteNames.deliveryDashboard,
-          builder: (_, __) => const DeliveryScreen(),
+          pageBuilder: zolyaPageBuilderSimple(() => const DeliveryScreen()),
         ),
       ],
     ),
     GoRoute(
       path: '/checkout/:productId',
-      builder: (context, state) => CheckoutScreen(
-        productId: state.pathParameters['productId']!,
+      pageBuilder: zolyaPageBuilder(
+        (context, state) => CheckoutScreen(
+          productId: state.pathParameters['productId']!,
+        ),
       ),
     ),
     GoRoute(
       path: RouteNames.createListing,
-      builder: (_, __) => const CreateListingScreen(),
+      pageBuilder: zolyaPageBuilderSimple(() => const CreateListingScreen()),
     ),
     GoRoute(
       path: RouteNames.legalTerms,
-      builder: (_, __) => const TermsScreen(),
+      pageBuilder: zolyaPageBuilderSimple(() => const TermsScreen()),
     ),
     GoRoute(
       path: RouteNames.legalPrivacy,
-      builder: (_, __) => const PrivacyPolicyScreen(),
+      pageBuilder: zolyaPageBuilderSimple(() => const PrivacyPolicyScreen()),
     ),
     GoRoute(
       path: RouteNames.legalCookies,
-      builder: (_, __) => const CookieUseScreen(),
+      pageBuilder: zolyaPageBuilderSimple(() => const CookieUseScreen()),
     ),
     GoRoute(
       path: RouteNames.notifications,
-      builder: (_, __) => const NotificationsScreen(),
+      pageBuilder: zolyaPageBuilderSimple(() => const NotificationsScreen()),
     ),
     GoRoute(
       path: RouteNames.settings,
-      builder: (_, __) => const SettingsScreen(),
+      pageBuilder: zolyaPageBuilderSimple(() => const SettingsScreen()),
     ),
     GoRoute(
       path: RouteNames.productDetail,
-      builder: (context, state) => ProductDetailScreen(
-        productId: state.pathParameters['id']!,
+      pageBuilder: zolyaPageBuilder(
+        (context, state) => ProductDetailScreen(
+          productId: state.pathParameters['id']!,
+        ),
       ),
     ),
     GoRoute(
       path: RouteNames.productReviews,
-      builder: (context, state) => ReviewsScreen(
-        productId: state.pathParameters['id']!,
+      pageBuilder: zolyaPageBuilder(
+        (context, state) => ReviewsScreen(
+          productId: state.pathParameters['id']!,
+        ),
       ),
     ),
     GoRoute(
       path: RouteNames.addressList,
-      builder: (_, __) => const AddressListScreen(),
+      pageBuilder: zolyaPageBuilderSimple(() => const AddressListScreen()),
     ),
     GoRoute(
       path: RouteNames.paymentMethods,
-      builder: (_, __) => const PaymentMethodScreen(),
+      pageBuilder: zolyaPageBuilderSimple(() => const PaymentMethodScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.sellerProfile,
+      pageBuilder: zolyaPageBuilder(
+        (context, state) => SellerProfileScreen(
+          sellerId: state.pathParameters['id']!,
+        ),
+      ),
+    ),
+    GoRoute(
+      path: RouteNames.favorites,
+      pageBuilder: zolyaPageBuilderSimple(() => const FavoritesScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.wallet,
+      pageBuilder: zolyaPageBuilderSimple(() => const WalletScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.faq,
+      pageBuilder: zolyaPageBuilderSimple(() => const FaqScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.discounts,
+      pageBuilder: zolyaPageBuilderSimple(() => const DiscountsScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.contactSupport,
+      pageBuilder: zolyaPageBuilderSimple(() => const ContactSupportScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.editProfile,
+      pageBuilder: zolyaPageBuilderSimple(() => const EditProfileScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.myProfile,
+      pageBuilder: zolyaPageBuilderSimple(() => const MyProfileScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.myListings,
+      pageBuilder: zolyaPageBuilderSimple(() => const MyListingsScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.myOffers,
+      pageBuilder: zolyaPageBuilderSimple(() => const MyOffersScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.aboutZolya,
+      pageBuilder: zolyaPageBuilderSimple(() => const AboutZolyaScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.inviteFriends,
+      pageBuilder: zolyaPageBuilderSimple(() => const InviteFriendsScreen()),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(
-    body: Center(child: Text('Page introuvable: ${state.error}')),
+    body: Center(child: Text('Page not found: ${state.error}')),
   ),
 );

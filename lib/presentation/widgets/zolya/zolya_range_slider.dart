@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../theme/zolya_theme.dart';
-
 class ZolyaRangeSlider extends StatelessWidget {
   const ZolyaRangeSlider({
     super.key,
@@ -20,12 +18,13 @@ class ZolyaRangeSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return SliderTheme(
       data: SliderThemeData(
-        activeTrackColor: ZolyaColors.or,
-        inactiveTrackColor: Theme.of(context).colorScheme.outline,
-        thumbColor: ZolyaColors.or,
-        overlayColor: ZolyaColors.or.withValues(alpha: 0.15),
+        activeTrackColor: scheme.primary,
+        inactiveTrackColor: scheme.outline,
+        thumbColor: scheme.primary,
+        overlayColor: scheme.primary.withValues(alpha: 0.15),
         rangeTrackShape: const RoundedRectRangeSliderTrackShape(),
         trackHeight: 4,
         rangeThumbShape: const RoundRangeSliderThumbShape(
@@ -62,12 +61,13 @@ class ZolyaSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return SliderTheme(
       data: SliderThemeData(
-        activeTrackColor: ZolyaColors.or,
-        inactiveTrackColor: Theme.of(context).colorScheme.outline,
-        thumbColor: ZolyaColors.or,
-        overlayColor: ZolyaColors.or.withValues(alpha: 0.15),
+        activeTrackColor: scheme.primary,
+        inactiveTrackColor: scheme.outline,
+        thumbColor: scheme.primary,
+        overlayColor: scheme.primary.withValues(alpha: 0.15),
         trackHeight: 4,
         thumbShape:
             const RoundSliderThumbShape(enabledThumbRadius: 10, elevation: 2),

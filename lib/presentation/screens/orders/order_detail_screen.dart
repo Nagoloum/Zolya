@@ -12,13 +12,13 @@ class OrderDetailScreen extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: const ZolyaTopBar(title: 'Commande', centerTitle: true),
+      appBar: const ZolyaTopBar(title: 'Order', centerTitle: true),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(ZolyaSpacing.lg),
           child: Center(
             child: Text(
-              'Commande #$orderId',
+              'Order #$orderId',
               style: ZolyaTypography.title.copyWith(color: scheme.onSurface),
             ),
           ),

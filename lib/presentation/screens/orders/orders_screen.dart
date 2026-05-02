@@ -21,7 +21,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const ZolyaTopBar(
-        title: 'Mes commandes',
+        title: 'My orders',
         showBack: false,
         centerTitle: true,
       ),
@@ -33,8 +33,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
               ZolyaSegmentedControl<_OrderTab>(
                 value: _tab,
                 segments: const [
-                  ZolyaSegment(value: _OrderTab.buyer, label: 'Achats'),
-                  ZolyaSegment(value: _OrderTab.seller, label: 'Ventes'),
+                  ZolyaSegment(value: _OrderTab.buyer, label: 'Purchases'),
+                  ZolyaSegment(value: _OrderTab.seller, label: 'Sales'),
                 ],
                 onChanged: (v) => setState(() => _tab = v),
               ),
@@ -44,13 +44,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   children: const [
                     ZolyaEmptyState(
                       icon: LucideIcons.receiptText,
-                      title: 'Aucun achat pour le moment',
-                      body: 'Vos achats apparaîtront ici.',
+                      title: 'No purchases yet',
+                      body: 'Your purchases will appear here.',
                     ),
                     ZolyaEmptyState(
                       icon: LucideIcons.receiptText,
-                      title: 'Aucune vente pour le moment',
-                      body: 'Vos ventes apparaîtront ici.',
+                      title: 'No sales yet',
+                      body: 'Your sales will appear here.',
                     ),
                   ],
                 ),

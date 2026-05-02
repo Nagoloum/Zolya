@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_strings.dart';
 import 'app_strings_en.dart';
@@ -15,6 +16,8 @@ class LocaleProvider extends StatefulWidget {
     required this.child,
     this.initial = AppLocale.en,
   });
+
+  static const String _prefsKey = 'zolya.locale';
 
   static _LocaleProviderState _of(BuildContext context) {
     final scope = context.dependOnInheritedWidgetOfExactType<_LocaleScope>();
@@ -33,9 +36,42 @@ class LocaleProvider extends StatefulWidget {
 class _LocaleProviderState extends State<LocaleProvider> {
   late AppLocale _locale = widget.initial;
 
+  @override
+  void initState() {
+    super.initState();
+    _restore();
+  }
+
+  Future<void> _restore() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(LocaleProvider._prefsKey);
+      if (raw == null) return;
+      final restored = switch (raw) {
+        'fr' => AppLocale.fr,
+        'en' => AppLocale.en,
+        _ => null,
+      };
+      if (restored != null && restored != _locale && mounted) {
+        setState(() => _locale = restored);
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _persist(AppLocale locale) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        LocaleProvider._prefsKey,
+        locale == AppLocale.fr ? 'fr' : 'en',
+      );
+    } catch (_) {}
+  }
+
   void _setLocale(AppLocale locale) {
     if (locale == _locale) return;
     setState(() => _locale = locale);
+    _persist(locale);
   }
 
   AppStrings get _strings => switch (_locale) {

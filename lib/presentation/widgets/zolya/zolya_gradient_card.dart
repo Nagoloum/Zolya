@@ -8,15 +8,17 @@ class ZolyaGradientCard extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.all(ZolyaSpacing.lg),
     this.gradient,
+    this.onTap,
   });
 
   final Widget child;
   final EdgeInsets padding;
   final Gradient? gradient;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final card = Container(
       padding: padding,
       decoration: BoxDecoration(
         gradient: gradient ?? ZolyaGradients.or,
@@ -30,6 +32,17 @@ class ZolyaGradientCard extends StatelessWidget {
         ],
       ),
       child: child,
+    );
+
+    if (onTap == null) return card;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(ZolyaRadius.lg),
+        child: card,
+      ),
     );
   }
 }

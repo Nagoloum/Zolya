@@ -29,6 +29,7 @@ abstract class RouteNames {
   static String productReviewsPath(String id) => '/product/$id/reviews';
 
   static const String profile = '/profile';
+  static const String myProfile = '/profile/me';
   static const String editProfile = '/profile/edit';
   static const String wallet = '/wallet';
   static const String settings = '/settings';
@@ -41,9 +42,20 @@ abstract class RouteNames {
   static const String legalPrivacy = '/legal/privacy';
   static const String legalCookies = '/legal/cookies';
 
+  static const String sellerProfile = '/seller/:id';
+  static const String favorites = '/favorites';
+  static const String discounts = '/discounts';
+  static const String faq = '/help/faq';
+  static const String helpCenter = '/help';
+  static const String contactSupport = '/help/contact';
+  static const String inviteFriends = '/invite';
+  static const String aboutZolya = '/about';
+  static const String myOffers = '/offers';
+
   static String productDetailPath(String id) => '/product/$id';
   static String checkoutPath(String productId) => '/checkout/$productId';
   static String orderDetailPath(String id) => '/orders/$id';
   static String deliveryDetailPath(String id) => '/delivery/$id';
   static String editListingPath(String id) => '/sell/edit/$id';
+  static String sellerProfilePath(String id) => '/seller/$id';
 }

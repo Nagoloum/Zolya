@@ -86,3 +86,77 @@ class ProductRatingSummary {
     required this.breakdown,
   });
 }
+
+class SellerProfileUi {
+  final String id;
+  final String fullName;
+  final String? avatarUrl;
+  final String? bio;
+  final String city;
+  final DateTime memberSince;
+  final int totalSales;
+  final int totalListings;
+  final int followersCount;
+  final int followingCount;
+  final double averageRating;
+  final int totalReviews;
+  final List<int> ratingBreakdown;
+  final List<String> languages;
+  final bool isVerified;
+
+  const SellerProfileUi({
+    required this.id,
+    required this.fullName,
+    this.avatarUrl,
+    this.bio,
+    required this.city,
+    required this.memberSince,
+    required this.totalSales,
+    required this.totalListings,
+    this.followersCount = 0,
+    this.followingCount = 0,
+    required this.averageRating,
+    required this.totalReviews,
+    required this.ratingBreakdown,
+    this.languages = const [],
+    this.isVerified = false,
+  });
+}
+
+class FaqItem {
+  final String question;
+  final String answer;
+
+  const FaqItem({required this.question, required this.answer});
+}
+
+class FaqSection {
+  final String title;
+  final List<FaqItem> items;
+
+  const FaqSection({required this.title, required this.items});
+}
+
+class DiscountUi {
+  final String id;
+  final String productId;
+  final String productTitle;
+  final String? productImageUrl;
+  final int originalPrice;
+  final int discountedPrice;
+  final int discountPercent;
+  final DateTime startedAt;
+  final DateTime? endsAt;
+
+  const DiscountUi({
+    required this.id,
+    required this.productId,
+    required this.productTitle,
+    this.productImageUrl,
+    required this.originalPrice,
+    required this.discountedPrice,
+    required this.discountPercent,
+    required this.startedAt,
+    this.endsAt,
+  });
+}

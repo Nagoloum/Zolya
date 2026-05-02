@@ -172,4 +172,87 @@ class AppStringsEn implements AppStrings {
   @override String get paymentAddCta => 'Add Account';
   @override String get paymentAddedTitle => 'Congratulations!';
   @override String get paymentAddedMessage => 'Your new account has been added.';
+
+  // Common
+  @override String get commonYes => 'Yes';
+  @override String get commonNo => 'No';
+  @override String get commonShare => 'Share';
+  @override String get commonEdit => 'Edit';
+  @override String get commonSave => 'Save';
+  @override String get commonCancel => 'Cancel';
+  @override String get commonClose => 'Close';
+  @override String get commonRetry => 'Retry';
+
+  // Profile (Account screen)
+  @override String get profileTitle => 'My profile';
+  @override String get sectionMySales => 'My sales';
+  @override String get sectionMyPurchases => 'My purchases';
+  @override String get sectionAccount => 'Account';
+  @override String get sectionHelp => 'Help & support';
+  @override String get sectionPreferences => 'Preferences';
+  @override String get sectionLegal => 'Legal';
+  @override String get menuMyArticles => 'My articles';
+  @override String get menuMyDiscounts => 'My discounts';
+  @override String get menuSalesHistory => 'Sales history';
+  @override String get menuFavorites => 'Favorites';
+  @override String get menuPurchaseHistory => 'Purchase history';
+  @override String get menuMyOffers => 'My offers';
+  @override String get menuPersonalInfo => 'Personal information';
+  @override String get menuMyAddresses => 'My addresses';
+  @override String get menuPaymentMethods => 'Payment methods';
+  @override String get menuWallet => 'Wallet';
+  @override String get menuNotifications => 'Notifications';
+  @override String get menuFaq => 'Help center';
+  @override String get menuContactUs => 'Contact us';
+  @override String get menuRateApp => 'Rate the app';
+  @override String get menuInviteFriend => 'Invite a friend';
+  @override String get menuInviteEarn => 'Earn 1000 FCFA';
+  @override String get menuSettings => 'Settings';
+  @override String get menuTerms => 'Terms of use';
+  @override String get menuPrivacy => 'Privacy policy';
+  @override String get menuCookies => 'Cookies';
+  @override String get menuAboutZolya => 'About Zolya';
+  @override String get menuLogout => 'Log out';
+  @override String get walletShortcut => 'Wallet';
+
+  // Profile / About tab
+  @override String get profileTabListings => 'Listings';
+  @override String get profileTabReviews => 'Reviews';
+  @override String get profileTabAbout => 'About';
+  @override String get profileNoListingsTitle => 'No listings yet';
+  @override String get profileNoListingsBody => "You haven't published anything. Start your first listing!";
+  @override String get profileNoListingsCta => 'Publish';
+  @override String get profileStatArticles => 'Articles';
+  @override String get profileStatSales => 'Sales';
+  @override String get profileStatFollowers => 'Followers';
+  @override String get aboutBioTitle => 'Bio';
+  @override String get aboutPersonalInfo => 'Personal information';
+  @override String get aboutUsername => 'Username';
+  @override String get aboutPhone => 'Phone';
+  @override String get aboutEmail => 'Email';
+  @override String get aboutLocation => 'Location';
+  @override String get aboutMemberSince => 'Member since';
+  @override String get aboutVerified => 'Verified';
+  @override String get aboutBioDefault => 'Passionate about fashion, I resell my pieces with love and care. Feel free to send me your offers!';
+
+  // Edit profile
+  @override String get editProfileTitle => 'Edit profile';
+  @override String get editProfileSection => 'Information';
+  @override String get editProfileFullName => 'Full name';
+  @override String get editProfileFullNameHint => 'Your name';
+  @override String get editProfileFieldRequired => 'Required field';
+  @override String get editProfilePhone => 'Phone number';
+  @override String get editProfileEmail => 'Email (optional)';
+  @override String get editProfileEmailHint => 'your@email.com';
+  @override String get editProfileCity => 'City';
+  @override String get editProfileCityHint => 'Douala';
+  @override String get editProfileBio => 'Bio';
+  @override String get editProfileBioHint => 'Tell buyers a few words about you…';
+  @override String get editProfileSaved => 'Profile updated';
+
+  // Settings — appearance
+  @override String get settingsAppearance => 'Appearance';
+  @override String get settingsThemeLight => 'Light';
+  @override String get settingsThemeDark => 'Dark';
+  @override String get settingsThemeSystem => 'System';
 }

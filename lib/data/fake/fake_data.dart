@@ -755,4 +755,198 @@ abstract class FakeData {
   static List<String> availableSizesFor(Product product) {
     return _sizesByCategory[product.category] ?? const ['S', 'M', 'L'];
   }
+
+  static SellerProfileUi sellerFor(String sellerId) {
+    final seedProduct = products.firstWhere(
+      (p) => p.sellerId == sellerId,
+      orElse: () => products.first,
+    );
+    final hash = sellerId.codeUnits.fold<int>(0, (a, b) => a + b);
+    final cities = ['Douala', 'Yaoundé', 'Bafoussam', 'Kribi', 'Limbé'];
+    final bios = [
+      'Passionnée de mode, je revends mes pièces avec amour et soin.',
+      "Vendeur sérieux, j'expédie rapidement et emballe avec soin.",
+      'Je donne une seconde vie aux beaux articles. À votre disposition !',
+      'Adepte de la mode durable depuis 2 ans. Réponse rapide.',
+    ];
+    return SellerProfileUi(
+      id: sellerId,
+      fullName: seedProduct.sellerName,
+      avatarUrl: seedProduct.sellerAvatarUrl,
+      bio: bios[hash % bios.length],
+      city: cities[hash % cities.length],
+      memberSince: DateTime.now().subtract(Duration(days: 90 + (hash % 720))),
+      totalSales: 12 + (hash % 80),
+      totalListings: products.where((p) => p.sellerId == sellerId).length +
+          (hash % 5),
+      followersCount: 24 + (hash % 250),
+      followingCount: 8 + (hash % 50),
+      averageRating: 4.0 + ((hash % 10) / 10.0),
+      totalReviews: 18 + (hash % 120),
+      ratingBreakdown: [
+        80 + (hash % 40),
+        25 + (hash % 20),
+        8 + (hash % 8),
+        3 + (hash % 4),
+        1 + (hash % 2),
+      ],
+      languages: const ['Français', 'English'],
+      isVerified: (hash % 3) == 0,
+    );
+  }
+
+  static List<Product> productsBySeller(String sellerId) {
+    final list = products.where((p) => p.sellerId == sellerId).toList();
+    if (list.isEmpty) {
+      final hash = sellerId.codeUnits.fold<int>(0, (a, b) => a + b);
+      return [products[hash % products.length]];
+    }
+    return list;
+  }
+
+  static List<Product> similarProducts(Product product, {int limit = 8}) {
+    final sameCategory = products
+        .where((p) => p.id != product.id && p.category == product.category)
+        .toList();
+    final others =
+        products.where((p) => p.id != product.id && p.category != product.category);
+    return [...sameCategory, ...others].take(limit).toList();
+  }
+
+  static List<ReviewItemData> sellerReviews(String sellerId) {
+    final seed = sellerId.codeUnits.fold<int>(0, (a, b) => a + b);
+    final result = <ReviewItemData>[];
+    for (var i = 0; i < 8; i++) {
+      result.add(_reviewPool[(seed + i * 5) % _reviewPool.length]);
+    }
+    return result;
+  }
+
+  static const List<FaqSection> faq = [
+    FaqSection(
+      title: 'Acheter',
+      items: [
+        FaqItem(
+          question: 'Comment passer une commande ?',
+          answer:
+              "Sélectionnez l'article, choisissez votre adresse de livraison, "
+              'puis votre moyen de paiement Mobile Money (MTN ou Orange). '
+              'Validez : le paiement est sécurisé en escrow jusqu\'à réception.',
+        ),
+        FaqItem(
+          question: 'Quels sont les modes de paiement acceptés ?',
+          answer:
+              'Zolya accepte MTN Mobile Money et Orange Money. '
+              "Le paiement est bloqué jusqu'à ce que vous confirmiez "
+              "la bonne réception de l'article.",
+        ),
+        FaqItem(
+          question: 'Comment fonctionne la protection acheteur ?',
+          answer:
+              "Votre paiement reste en séquestre chez Zolya jusqu'à confirmation "
+              'de réception. Si l\'article n\'arrive pas ou ne correspond pas, '
+              'vous êtes remboursé sous 48h.',
+        ),
+        FaqItem(
+          question: 'Puis-je faire une proposition de prix ?',
+          answer:
+              "Oui ! Sur chaque fiche article, le bouton « Faire une offre » "
+              'permet de proposer un prix au vendeur (minimum 50% du prix '
+              "affiché). Le vendeur a 24h pour accepter ou refuser.",
+        ),
+      ],
+    ),
+    FaqSection(
+      title: 'Vendre',
+      items: [
+        FaqItem(
+          question: 'Comment publier un article ?',
+          answer:
+              'Appuyez sur le bouton « + » au centre de la barre de navigation, '
+              'ajoutez vos photos, décrivez l\'article (marque, taille, état) '
+              'et fixez votre prix. La publication est instantanée et gratuite.',
+        ),
+        FaqItem(
+          question: 'Quelle commission Zolya prélève-t-il ?',
+          answer:
+              'Zolya prélève 15% du prix de vente, déduits automatiquement '
+              'après confirmation de livraison. Aucun frais à la mise en vente.',
+        ),
+        FaqItem(
+          question: 'Quand suis-je payé ?',
+          answer:
+              "Dès que l'acheteur confirme la réception, le montant net "
+              '(prix de vente - 15%) est crédité sur votre portefeuille Zolya. '
+              'Vous pouvez retirer à tout moment vers votre Mobile Money.',
+        ),
+      ],
+    ),
+    FaqSection(
+      title: 'Livraison',
+      items: [
+        FaqItem(
+          question: 'Comment se passe la livraison ?',
+          answer:
+              "Un livreur Zolya récupère l'article chez le vendeur et "
+              "l'apporte à votre adresse. Délai moyen : 24 à 48h selon la zone.",
+        ),
+        FaqItem(
+          question: 'Quels sont les frais de livraison ?',
+          answer:
+              "Zone 1 (Akwa, Bonapriso) : 1 500 FCFA. "
+              "Zone 2 (Bonamoussadi, Logbessou) : 1 000 FCFA. "
+              'Zone 3 (Yassa, PK) : 2 000 FCFA. Les frais sont affichés au '
+              'checkout selon votre adresse.',
+        ),
+      ],
+    ),
+    FaqSection(
+      title: 'Compte & Sécurité',
+      items: [
+        FaqItem(
+          question: 'Comment vérifier mon compte ?',
+          answer:
+              'Validez votre numéro de téléphone via le code OTP reçu par SMS. '
+              "Un compte vérifié inspire plus confiance et augmente vos chances "
+              'de vendre.',
+        ),
+        FaqItem(
+          question: 'Comment changer mon mot de passe ?',
+          answer:
+              'Dans Paramètres → Sécurité → Mot de passe. '
+              'Si vous l\'avez oublié, utilisez « Mot de passe oublié » sur '
+              "l'écran de connexion.",
+        ),
+      ],
+    ),
+  ];
+
+  static List<DiscountUi> myDiscounts() {
+    return [
+      DiscountUi(
+        id: 'd-1',
+        productId: 'p-001',
+        productTitle: 'Regular Fit Slogan',
+        productImageUrl:
+            'https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=400',
+        originalPrice: 8500,
+        discountedPrice: 6800,
+        discountPercent: 20,
+        startedAt: DateTime.now().subtract(const Duration(days: 3)),
+        endsAt: DateTime.now().add(const Duration(days: 4)),
+      ),
+      DiscountUi(
+        id: 'd-2',
+        productId: 'p-007',
+        productTitle: 'Nike Air Force 1 White',
+        productImageUrl:
+            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',
+        originalPrice: 28500,
+        discountedPrice: 22800,
+        discountPercent: 20,
+        startedAt: DateTime.now().subtract(const Duration(days: 1)),
+        endsAt: DateTime.now().add(const Duration(days: 6)),
+      ),
+    ];
+  }
 }

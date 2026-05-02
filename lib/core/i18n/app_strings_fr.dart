@@ -172,4 +172,87 @@ class AppStringsFr implements AppStrings {
   @override String get paymentAddCta => 'Ajouter le compte';
   @override String get paymentAddedTitle => 'Félicitations !';
   @override String get paymentAddedMessage => 'Votre nouveau compte a été ajouté.';
+
+  // Common
+  @override String get commonYes => 'Oui';
+  @override String get commonNo => 'Non';
+  @override String get commonShare => 'Partager';
+  @override String get commonEdit => 'Modifier';
+  @override String get commonSave => 'Enregistrer';
+  @override String get commonCancel => 'Annuler';
+  @override String get commonClose => 'Fermer';
+  @override String get commonRetry => 'Réessayer';
+
+  // Profile (Account screen)
+  @override String get profileTitle => 'Mon profil';
+  @override String get sectionMySales => 'Mes ventes';
+  @override String get sectionMyPurchases => 'Mes achats';
+  @override String get sectionAccount => 'Compte';
+  @override String get sectionHelp => 'Aide & support';
+  @override String get sectionPreferences => 'Préférences';
+  @override String get sectionLegal => 'Légal';
+  @override String get menuMyArticles => 'Mes articles';
+  @override String get menuMyDiscounts => 'Mes réductions';
+  @override String get menuSalesHistory => 'Historique des ventes';
+  @override String get menuFavorites => 'Favoris';
+  @override String get menuPurchaseHistory => 'Historique des achats';
+  @override String get menuMyOffers => 'Mes offres';
+  @override String get menuPersonalInfo => 'Informations personnelles';
+  @override String get menuMyAddresses => 'Mes adresses';
+  @override String get menuPaymentMethods => 'Moyens de paiement';
+  @override String get menuWallet => 'Portefeuille';
+  @override String get menuNotifications => 'Notifications';
+  @override String get menuFaq => "Centre d'aide";
+  @override String get menuContactUs => 'Nous contacter';
+  @override String get menuRateApp => "Évaluer l'application";
+  @override String get menuInviteFriend => 'Inviter un ami';
+  @override String get menuInviteEarn => 'Gagne 1000 FCFA';
+  @override String get menuSettings => 'Paramètres';
+  @override String get menuTerms => "Conditions d'utilisation";
+  @override String get menuPrivacy => 'Politique de confidentialité';
+  @override String get menuCookies => 'Cookies';
+  @override String get menuAboutZolya => 'À propos de Zolya';
+  @override String get menuLogout => 'Se déconnecter';
+  @override String get walletShortcut => 'Portefeuille';
+
+  // Profile / About tab
+  @override String get profileTabListings => 'Annonces';
+  @override String get profileTabReviews => 'Évaluations';
+  @override String get profileTabAbout => 'À propos';
+  @override String get profileNoListingsTitle => "Aucune annonce";
+  @override String get profileNoListingsBody => "Vous n'avez encore rien publié. Commencez votre première annonce !";
+  @override String get profileNoListingsCta => 'Publier';
+  @override String get profileStatArticles => 'Articles';
+  @override String get profileStatSales => 'Ventes';
+  @override String get profileStatFollowers => 'Abonnés';
+  @override String get aboutBioTitle => 'Bio';
+  @override String get aboutPersonalInfo => 'Informations personnelles';
+  @override String get aboutUsername => "Nom d'utilisateur";
+  @override String get aboutPhone => 'Téléphone';
+  @override String get aboutEmail => 'Email';
+  @override String get aboutLocation => 'Localisation';
+  @override String get aboutMemberSince => 'Membre depuis';
+  @override String get aboutVerified => 'Compte vérifié';
+  @override String get aboutBioDefault => 'Passionnée de mode, je revends mes pièces avec amour et soin. N\'hésitez pas à me faire vos offres !';
+
+  // Edit profile
+  @override String get editProfileTitle => 'Modifier le profil';
+  @override String get editProfileSection => 'Informations';
+  @override String get editProfileFullName => 'Nom complet';
+  @override String get editProfileFullNameHint => 'Votre nom';
+  @override String get editProfileFieldRequired => 'Champ obligatoire';
+  @override String get editProfilePhone => 'Numéro de téléphone';
+  @override String get editProfileEmail => 'Email (optionnel)';
+  @override String get editProfileEmailHint => 'votre@email.com';
+  @override String get editProfileCity => 'Ville';
+  @override String get editProfileCityHint => 'Douala';
+  @override String get editProfileBio => 'Bio';
+  @override String get editProfileBioHint => 'Présentez-vous en quelques mots aux acheteurs…';
+  @override String get editProfileSaved => 'Profil mis à jour';
+
+  // Settings — appearance
+  @override String get settingsAppearance => 'Apparence';
+  @override String get settingsThemeLight => 'Clair';
+  @override String get settingsThemeDark => 'Sombre';
+  @override String get settingsThemeSystem => 'Système';
 }

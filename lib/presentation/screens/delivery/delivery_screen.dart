@@ -22,7 +22,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const ZolyaTopBar(
-        title: 'Livreur',
+        title: 'Courier',
         showBack: false,
         centerTitle: true,
       ),
@@ -35,9 +35,9 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                 value: _tab,
                 segments: const [
                   ZolyaSegment(
-                      value: _DeliveryTab.available, label: 'Disponibles'),
+                      value: _DeliveryTab.available, label: 'Available'),
                   ZolyaSegment(
-                      value: _DeliveryTab.mine, label: 'Mes livraisons'),
+                      value: _DeliveryTab.mine, label: 'My deliveries'),
                 ],
                 onChanged: (v) => setState(() => _tab = v),
               ),
@@ -66,8 +66,8 @@ class _AvailableDeliveriesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return const ZolyaEmptyState(
       icon: LucideIcons.truck,
-      title: 'Aucune livraison disponible',
-      body: 'Les courses disponibles apparaîtront ici dès qu\'un client en passe une.',
+      title: 'No deliveries available',
+      body: 'Available rides will appear here as soon as a client orders one.',
     );
   }
 }
@@ -85,7 +85,7 @@ class _MyDeliveriesView extends StatelessWidget {
         Expanded(
           child: ZolyaEmptyState(
             icon: LucideIcons.truck,
-            title: 'Aucune livraison cette semaine',
+            title: 'No deliveries this week',
           ),
         ),
       ],
@@ -109,10 +109,10 @@ class _EarningsCard extends StatelessWidget {
         children: [
           _Stat(
             value: Formatters.price(weeklyEarnings),
-            label: 'Gains semaine',
+            label: 'Weekly earnings',
           ),
           Container(width: 1, height: 40, color: ZolyaColors.noir.withValues(alpha: 0.15)),
-          _Stat(value: '$deliveryCount', label: 'Livraisons'),
+          _Stat(value: '$deliveryCount', label: 'Deliveries'),
         ],
       ),
     );
