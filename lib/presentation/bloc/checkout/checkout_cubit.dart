@@ -1,6 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/constants/delivery_zones.dart';
+import '../../../data/fake/fake_data.dart';
 import '../../../data/fake/ui_models.dart';
+import '../../../domain/entities/order.dart';
 import '../../../domain/repositories/address_book_repository.dart';
 import '../../../domain/repositories/payment_methods_repository.dart';
 import 'checkout_state.dart';
@@ -10,10 +13,12 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     required this.addressRepo,
     required this.paymentRepo,
     required int subtotal,
+    this.productId,
   }) : super(CheckoutState.initial(subtotal));
 
   final AddressBookRepository addressRepo;
   final PaymentMethodsRepository paymentRepo;
+  final String? productId;
 
   Future<void> initDefaults() async {
     final addrRes = await addressRepo.getDefault();
@@ -63,8 +68,43 @@ class CheckoutCubit extends Cubit<CheckoutState> {
 
   Future<bool> placeOrder() async {
     emit(state.copyWith(status: CheckoutStatus.placing, clearError: true));
-
     await Future.delayed(const Duration(milliseconds: 600));
+
+    if (productId != null) {
+      final product = FakeData.products.firstWhere(
+        (p) => p.id == productId,
+        orElse: () => FakeData.products.first,
+      );
+      final user = FakeData.currentUser;
+      final addressLabel = state.address?.fullAddress ?? 'Douala';
+      final commission = (product.price * 0.15).round();
+      final order = Order(
+        id: 'o-${DateTime.now().microsecondsSinceEpoch}',
+        orderNumber:
+            'ZLY-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
+        buyerId: user.id,
+        sellerId: product.sellerId,
+        productId: product.id,
+        productTitle: product.title,
+        productImageUrl: product.mainImageUrl,
+        articlePrice: state.subtotal,
+        deliveryFee: state.shippingFee,
+        totalAmount: state.total,
+        zolyaCommission: commission,
+        sellerReceives: product.price - commission,
+        status: OrderStatus.paid,
+        deliveryAddress: DeliveryAddress(
+          neighborhood: addressLabel.split(',').first.trim(),
+          street: addressLabel,
+          phone: user.phone,
+          zone: DeliveryZone.zone2,
+        ),
+        createdAt: DateTime.now(),
+        paidAt: DateTime.now(),
+      );
+      FakeData.addPurchase(order);
+    }
+
     emit(state.copyWith(status: CheckoutStatus.success));
     return true;
   }

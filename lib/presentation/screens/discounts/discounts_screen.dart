@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../core/extensions/date_extensions.dart';
+import '../../../core/i18n/locale_provider.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../data/fake/fake_data.dart';
 import '../../../data/fake/ui_models.dart';
@@ -52,14 +52,15 @@ class _DiscountsScreenState extends State<DiscountsScreen> {
     final scheme = theme.colorScheme;
     final isLight = theme.brightness == Brightness.light;
     final mutedColor = isLight ? ZolyaColors.texte2 : ZolyaColors.texte2Dark;
+    final l = context.l10n;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: const ZolyaTopBar(title: 'My discounts', centerTitle: true),
+      appBar: ZolyaTopBar(title: l.discountsTitle, centerTitle: true),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openNewSheet,
         icon: const Icon(LucideIcons.plus),
-        label: const Text('New discount'),
+        label: Text(l.discountsNewCta),
       ),
       body: BlocBuilder<DiscountsCubit, DiscountsState>(
         builder: (context, state) {
@@ -96,13 +97,12 @@ class _DiscountsContent extends StatelessWidget {
     if (loading && discounts.isEmpty) {
       return const Center(child: ZolyaSpinner());
     }
+    final l = context.l10n;
     return discounts.isEmpty
-          ? const ZolyaEmptyState(
+          ? ZolyaEmptyState(
               icon: LucideIcons.tag,
-              title: 'No active discount',
-              body:
-                  'Boost your sales by offering discounts on your articles. '
-                  'Touchez « + » pour démarrer.',
+              title: l.discountsEmptyTitle,
+              body: l.discountsEmptyBody,
             )
           : ListView(
               padding: const EdgeInsets.all(ZolyaSpacing.lg),
@@ -121,8 +121,7 @@ class _DiscountsContent extends StatelessWidget {
                       const SizedBox(width: ZolyaSpacing.sm),
                       Expanded(
                         child: Text(
-                          'Les acheteurs voient un badge promo et reçoivent une notification. '
-                          'A successful discount boosts your sale chances by +40%.',
+                          l.discountsInfoBanner,
                           style: ZolyaTypography.bodySmall
                               .copyWith(color: mutedColor),
                         ),
@@ -227,23 +226,171 @@ class _DiscountCard extends StatelessWidget {
                   children: [
                     Icon(LucideIcons.clock3, size: 12, color: mutedColor),
                     const SizedBox(width: 4),
-                    Text(
-                      discount.endsAt != null
-                          ? 'Expire ${discount.endsAt!.timeAgo.replaceAll("Il y a", "dans")}'
-                          : 'No expiration',
-                      style: ZolyaTypography.label
-                          .copyWith(color: mutedColor),
-                    ),
+                    Builder(builder: (context) {
+                      final l = context.l10n;
+                      String label;
+                      if (discount.endsAt == null) {
+                        label = l.discountsNoExpiration;
+                      } else {
+                        final remainingMs = discount.endsAt!
+                            .difference(DateTime.now())
+                            .inMilliseconds;
+                        final days = (remainingMs / Duration.millisecondsPerDay)
+                            .ceil()
+                            .clamp(0, 365);
+                        label = days <= 0
+                            ? l.discountsExpiresInDays(0)
+                            : l.discountsExpiresInDays(days);
+                      }
+                      return Text(
+                        label,
+                        style: ZolyaTypography.label
+                            .copyWith(color: mutedColor),
+                      );
+                    }),
                   ],
                 ),
               ],
             ),
           ),
-          IconButton(
-            icon: Icon(LucideIcons.ellipsisVertical, color: mutedColor),
-            onPressed: () {},
-          ),
+          Builder(builder: (innerCtx) {
+            return IconButton(
+              icon: Icon(LucideIcons.ellipsisVertical, color: mutedColor),
+              onPressed: () => _showActionMenu(innerCtx),
+            );
+          }),
         ],
+      ),
+    );
+  }
+
+  void _showActionMenu(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => _DiscountActionsSheet(
+        onEdit: () {
+          Navigator.of(sheetCtx).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Edit coming soon')),
+          );
+        },
+        onCancel: () {
+          Navigator.of(sheetCtx).pop();
+          context.read<DiscountsCubit>().remove(discount.id);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Discount cancelled')),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _DiscountActionsSheet extends StatelessWidget {
+  const _DiscountActionsSheet({
+    required this.onEdit,
+    required this.onCancel,
+  });
+  final VoidCallback onEdit;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final isLight = theme.brightness == Brightness.light;
+    final borderColor =
+        isLight ? ZolyaColors.bordure : ZolyaColors.bordureDark;
+    final l = context.l10n;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(ZolyaRadius.xl),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            ZolyaSpacing.lg,
+            ZolyaSpacing.md,
+            ZolyaSpacing.lg,
+            ZolyaSpacing.lg,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: ZolyaSpacing.lg),
+                  decoration: BoxDecoration(
+                    color: borderColor,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              _ActionRow(
+                icon: LucideIcons.pencil,
+                label: l.discountActionEdit,
+                onTap: onEdit,
+                color: scheme.onSurface,
+              ),
+              const SizedBox(height: ZolyaSpacing.sm),
+              _ActionRow(
+                icon: LucideIcons.x,
+                label: l.discountActionCancel,
+                onTap: onCancel,
+                color: scheme.error,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionRow extends StatelessWidget {
+  const _ActionRow({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    required this.color,
+  });
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(ZolyaRadius.md),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: ZolyaSpacing.md,
+            vertical: ZolyaSpacing.md + 2,
+          ),
+          child: Row(
+            children: [
+              Icon(icon, color: color, size: 20),
+              const SizedBox(width: ZolyaSpacing.md),
+              Text(
+                label,
+                style: ZolyaTypography.body.copyWith(color: color),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../core/i18n/app_strings.dart';
+import '../../../core/i18n/locale_provider.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../theme/zolya_theme.dart';
 import 'zolya_button.dart';
@@ -66,41 +68,40 @@ class _ZolyaPriceOfferSheetState extends State<ZolyaPriceOfferSheet> {
     super.dispose();
   }
 
-  void _onTextChanged(String v) {
-    final parsed = int.tryParse(v.replaceAll(RegExp(r'[^0-9]'), ''));
-    setState(() {
-      if (parsed == null) {
-        _error = 'Montant invalide';
-        return;
-      }
-      _amount = parsed;
-      _error = _validate(parsed);
-    });
-  }
-
-  String? _validate(int v) {
-    if (v < _minOffer) {
-      return 'Minimum : ${Formatters.price(_minOffer)} (50% du prix)';
-    }
-    if (v >= widget.productPrice) {
-      return "L'offre doit être inférieure au prix affiché";
-    }
+  String? _validate(int v, AppStrings l) {
+    if (v < _minOffer) return l.priceOfferMinError;
+    if (v >= widget.productPrice) return l.priceOfferMaxError;
     return null;
   }
 
+  void _onTextChanged(String v) {
+    final l = context.l10n;
+    final parsed = int.tryParse(v.replaceAll(RegExp(r'[^0-9]'), ''));
+    setState(() {
+      if (parsed == null) {
+        _error = l.priceOfferMinError;
+        return;
+      }
+      _amount = parsed;
+      _error = _validate(parsed, l);
+    });
+  }
+
   void _onSliderChanged(double v) {
+    final l = context.l10n;
     final rounded = (v / 100).round() * 100;
     setState(() {
       _amount = rounded;
       _ctrl.text = rounded.toString();
       _ctrl.selection =
           TextSelection.collapsed(offset: _ctrl.text.length);
-      _error = _validate(rounded);
+      _error = _validate(rounded, l);
     });
   }
 
   void _submit() {
-    final err = _validate(_amount);
+    final l = context.l10n;
+    final err = _validate(_amount, l);
     if (err != null) {
       setState(() => _error = err);
       return;
@@ -117,6 +118,7 @@ class _ZolyaPriceOfferSheetState extends State<ZolyaPriceOfferSheet> {
     final mutedColor = isLight ? ZolyaColors.texte2 : ZolyaColors.texte2Dark;
     final borderColor = isLight ? ZolyaColors.bordure : ZolyaColors.bordureDark;
     final fillColor = isLight ? ZolyaColors.surface2 : ZolyaColors.surface2Dark;
+    final l = context.l10n;
 
     final discountPct =
         ((1 - _amount / widget.productPrice) * 100).clamp(0, 99).round();
@@ -153,7 +155,7 @@ class _ZolyaPriceOfferSheetState extends State<ZolyaPriceOfferSheet> {
                 ),
               ),
               Text(
-                'Faire une offre',
+                l.priceOfferTitle,
                 style: ZolyaTypography.title.copyWith(color: scheme.onSurface),
                 textAlign: TextAlign.center,
               ),
@@ -170,7 +172,7 @@ class _ZolyaPriceOfferSheetState extends State<ZolyaPriceOfferSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Prix demandé',
+                    l.priceOfferAskingPrice,
                     style: ZolyaTypography.bodySmall.copyWith(color: mutedColor),
                   ),
                   Text(
@@ -192,9 +194,9 @@ class _ZolyaPriceOfferSheetState extends State<ZolyaPriceOfferSheet> {
                 decoration: BoxDecoration(
                   color: fillColor,
                   borderRadius: BorderRadius.circular(ZolyaRadius.md),
-                  border: Border.all(
-                    color: _error != null ? scheme.error : borderColor,
-                  ),
+                  border: _error != null
+                      ? Border.all(color: scheme.error, width: 1)
+                      : null,
                 ),
                 child: Row(
                   children: [
@@ -211,7 +213,7 @@ class _ZolyaPriceOfferSheetState extends State<ZolyaPriceOfferSheet> {
                           FilteringTextInputFormatter.digitsOnly,
                         ],
                         textAlign: TextAlign.right,
-                        cursorColor: scheme.primary,
+                        cursorColor: scheme.onSurface,
                         style: ZolyaTypography.headline.copyWith(
                           color: scheme.onSurface,
                           fontSize: 28,
@@ -238,7 +240,7 @@ class _ZolyaPriceOfferSheetState extends State<ZolyaPriceOfferSheet> {
                     Icon(LucideIcons.tag, size: 14, color: scheme.primary),
                     const SizedBox(width: ZolyaSpacing.xs),
                     Text(
-                      '$discountPct % en dessous du prix demandé',
+                      '$discountPct % ${l.priceOfferDiscountInfo}',
                       style: ZolyaTypography.bodySmall.copyWith(
                         color: scheme.primary,
                         fontWeight: FontWeight.w600,
@@ -271,11 +273,11 @@ class _ZolyaPriceOfferSheetState extends State<ZolyaPriceOfferSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Min ${Formatters.price(_minOffer)}',
+                      '${l.priceOfferMinLabel} ${Formatters.price(_minOffer)}',
                       style: ZolyaTypography.label.copyWith(color: mutedColor),
                     ),
                     Text(
-                      'Max ${Formatters.price(_maxOffer)}',
+                      '${l.priceOfferMaxLabel} ${Formatters.price(_maxOffer)}',
                       style: ZolyaTypography.label.copyWith(color: mutedColor),
                     ),
                   ],
@@ -295,8 +297,7 @@ class _ZolyaPriceOfferSheetState extends State<ZolyaPriceOfferSheet> {
                     const SizedBox(width: ZolyaSpacing.sm),
                     Expanded(
                       child: Text(
-                        'Le vendeur a 24h pour accepter ou refuser votre offre. '
-                        'Vous serez notifié de sa réponse.',
+                        l.priceOfferNote,
                         style: ZolyaTypography.bodySmall
                             .copyWith(color: mutedColor),
                       ),
@@ -306,7 +307,7 @@ class _ZolyaPriceOfferSheetState extends State<ZolyaPriceOfferSheet> {
               ),
               const SizedBox(height: ZolyaSpacing.xl),
               ZolyaButton(
-                label: 'Envoyer l\'offre',
+                label: l.priceOfferSendCta,
                 onPressed: _error == null ? _submit : null,
                 expand: true,
                 size: ZolyaButtonSize.lg,

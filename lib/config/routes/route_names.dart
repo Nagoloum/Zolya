@@ -48,6 +48,9 @@ abstract class RouteNames {
   static const String faq = '/help/faq';
   static const String helpCenter = '/help';
   static const String contactSupport = '/help/contact';
+  static const String customerService = '/help/customer-service';
+  static const String contactUs = '/help/contact-us';
+  static const String notificationPreferences = '/notifications/preferences';
   static const String inviteFriends = '/invite';
   static const String aboutZolya = '/about';
   static const String myOffers = '/offers';

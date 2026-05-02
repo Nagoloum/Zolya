@@ -14,6 +14,8 @@ import '../../../data/fake/ui_models.dart';
 import '../../../domain/entities/product.dart';
 import '../../../domain/repositories/product_reviews_repository.dart';
 import '../../../theme/zolya_theme.dart';
+import '../../../domain/entities/product_comment.dart';
+import '../../bloc/comments/comments_cubit.dart';
 import '../../bloc/favorites/favorites_cubit.dart';
 import '../../bloc/favorites/favorites_state.dart';
 import '../../bloc/offers/offers_cubit.dart';
@@ -73,6 +75,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 class _Content extends StatelessWidget {
   const _Content({required this.product});
   final Product product;
+
+  bool get _isOwner => product.sellerId == FakeData.currentUser.id;
 
   void _onShareTap(BuildContext context) {
     ZolyaShareSheet.show(
@@ -153,16 +157,23 @@ class _Content extends StatelessWidget {
                     child: SizedBox(
                       width: contentWidth,
                       height: contentWidth,
-                      child: BlocSelector<FavoritesCubit, FavoritesState, bool>(
-                        selector: (s) => s.isFavorite(product.id),
-                        builder: (context, isFav) => ProductImageCarousel(
-                          images: product.imageUrls,
-                          isFavorite: isFav,
-                          onFavoriteTap: () => context
-                              .read<FavoritesCubit>()
-                              .toggle(product.id),
-                        ),
-                      ),
+                      child: _isOwner
+                          ? ProductImageCarousel(
+                              images: product.imageUrls,
+                              isFavorite: false,
+                              onFavoriteTap: null,
+                            )
+                          : BlocSelector<FavoritesCubit, FavoritesState, bool>(
+                              selector: (s) => s.isFavorite(product.id),
+                              builder: (context, isFav) =>
+                                  ProductImageCarousel(
+                                images: product.imageUrls,
+                                isFavorite: isFav,
+                                onFavoriteTap: () => context
+                                    .read<FavoritesCubit>()
+                                    .toggle(product.id),
+                              ),
+                            ),
                     ),
                   ),
                   const SizedBox(height: ZolyaSpacing.xl),
@@ -189,23 +200,222 @@ class _Content extends StatelessWidget {
                     product.description,
                     style: ZolyaTypography.body.copyWith(color: mutedColor),
                   ).animate().fadeIn(delay: 160.ms, duration: 300.ms),
+                  if (!_isOwner) ...[
+                    const SizedBox(height: ZolyaSpacing.xl),
+                    _SellerCard(product: product),
+                  ],
                   const SizedBox(height: ZolyaSpacing.xl),
-                  _SellerCard(product: product),
+                  _CommentsSection(productId: product.id, isOwner: _isOwner),
                   const SizedBox(height: ZolyaSpacing.xl),
                   _ProductTabs(product: product),
                 ],
               ),
             ),
-            _BottomBar(
-              product: product,
-              priceLabel: l.detailsPrice,
-              ctaLabel: l.detailsCheckout,
-              onOfferTap: () => _onOfferTap(context),
-              onCheckoutTap: () =>
-                  context.push(RouteNames.checkoutPath(product.id)),
-            ),
+            _isOwner
+                ? _OwnerBottomBar(
+                    onEditTap: () => context.push(RouteNames.createListing),
+                  )
+                : _BottomBar(
+                    product: product,
+                    priceLabel: l.detailsPrice,
+                    ctaLabel: l.detailsCheckout,
+                    onOfferTap: () => _onOfferTap(context),
+                    onCheckoutTap: () =>
+                        context.push(RouteNames.checkoutPath(product.id)),
+                  ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _OwnerBottomBar extends StatelessWidget {
+  const _OwnerBottomBar({required this.onEditTap});
+  final VoidCallback onEditTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final l = context.l10n;
+    return SafeArea(
+      top: false,
+      child: Container(
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          border: Border(top: BorderSide(color: scheme.outline)),
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: ZolyaSpacing.lg,
+          vertical: ZolyaSpacing.md,
+        ),
+        child: ZolyaButton(
+          label: l.ownerEditCta,
+          leading: const Icon(LucideIcons.pencil, size: 18),
+          onPressed: onEditTap,
+          size: ZolyaButtonSize.lg,
+          expand: true,
+        ),
+      ),
+    );
+  }
+}
+
+class _CommentsSection extends StatefulWidget {
+  const _CommentsSection({required this.productId, required this.isOwner});
+  final String productId;
+  final bool isOwner;
+
+  @override
+  State<_CommentsSection> createState() => _CommentsSectionState();
+}
+
+class _CommentsSectionState extends State<_CommentsSection> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<CommentsCubit>().seedFor(widget.productId);
+  }
+
+  void _onAddTap() {
+    ZolyaCommentSheet.show(
+      context,
+      onSubmit: (text, rating) {
+        context.read<CommentsCubit>().post(
+              productId: widget.productId,
+              text: text,
+              rating: rating,
+            );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.commentsPosted)),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final isLight = theme.brightness == Brightness.light;
+    final mutedColor = isLight ? ZolyaColors.texte2 : ZolyaColors.texte2Dark;
+    final l = context.l10n;
+
+    return BlocBuilder<CommentsCubit, CommentsState>(
+      builder: (context, state) {
+        final comments = state.commentsFor(widget.productId);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${l.commentsTitle} (${comments.length})',
+                    style: ZolyaTypography.subtitle
+                        .copyWith(color: scheme.onSurface),
+                  ),
+                ),
+                if (!widget.isOwner)
+                  TextButton.icon(
+                    onPressed: _onAddTap,
+                    icon: Icon(LucideIcons.plus,
+                        size: 16, color: scheme.primary),
+                    label: Text(
+                      l.commentsAddCta,
+                      style: ZolyaTypography.bodySmall.copyWith(
+                        color: scheme.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: ZolyaSpacing.sm),
+            if (comments.isEmpty)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: ZolyaSpacing.lg),
+                child: Text(
+                  l.commentsEmpty,
+                  style:
+                      ZolyaTypography.body.copyWith(color: mutedColor),
+                ),
+              )
+            else
+              ...comments.take(3).map(
+                    (c) => _CommentRow(
+                      comment: c,
+                      mutedColor: mutedColor,
+                      scheme: scheme,
+                    ),
+                  ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _CommentRow extends StatelessWidget {
+  const _CommentRow({
+    required this.comment,
+    required this.mutedColor,
+    required this.scheme,
+  });
+  final ProductComment comment;
+  final Color mutedColor;
+  final ColorScheme scheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: ZolyaSpacing.md),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ZolyaAvatar(
+            name: comment.authorName,
+            imageUrl: comment.authorAvatarUrl,
+            size: ZolyaAvatarSize.sm,
+            useGradient: false,
+          ),
+          const SizedBox(width: ZolyaSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      comment.authorName,
+                      style: ZolyaTypography.bodySmall.copyWith(
+                        color: scheme.onSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: ZolyaSpacing.sm),
+                    Text(
+                      comment.createdAt.timeAgo,
+                      style:
+                          ZolyaTypography.label.copyWith(color: mutedColor),
+                    ),
+                  ],
+                ),
+                if (comment.rating > 0) ...[
+                  const SizedBox(height: 2),
+                  ZolyaStarsRow(rating: comment.rating, size: 12),
+                ],
+                const SizedBox(height: 2),
+                Text(
+                  comment.text,
+                  style:
+                      ZolyaTypography.body.copyWith(color: scheme.onSurface),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

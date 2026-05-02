@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../config/routes/route_names.dart';
+import '../../../core/i18n/locale_provider.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../data/fake/fake_data.dart';
 import '../../../domain/entities/product.dart';
@@ -43,14 +44,15 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final products = _filteredProducts();
+    final l = context.l10n;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: const ZolyaTopBar(title: 'My articles', centerTitle: true),
+      appBar: ZolyaTopBar(title: l.myListingsTitle, centerTitle: true),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(RouteNames.createListing),
         icon: const Icon(LucideIcons.plus),
-        label: const Text('Publish'),
+        label: Text(l.myListingsPublishCta),
       ),
       body: Column(
         children: [
@@ -58,22 +60,23 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
             padding: const EdgeInsets.all(ZolyaSpacing.lg),
             child: ZolyaSegmentedControl<_ListingFilter>(
               value: _filter,
-              segments: const [
-                ZolyaSegment(value: _ListingFilter.active, label: 'Online'),
-                ZolyaSegment(value: _ListingFilter.sold, label: 'Sold'),
-                ZolyaSegment(value: _ListingFilter.draft, label: 'Drafts'),
+              segments: [
+                ZolyaSegment(
+                    value: _ListingFilter.active, label: l.myListingsTabActive),
+                ZolyaSegment(
+                    value: _ListingFilter.sold, label: l.myListingsTabSold),
+                ZolyaSegment(
+                    value: _ListingFilter.draft, label: l.myListingsTabDraft),
               ],
               onChanged: (v) => setState(() => _filter = v),
             ),
           ),
           Expanded(
             child: products.isEmpty
-                ? const ZolyaEmptyState(
+                ? ZolyaEmptyState(
                     icon: LucideIcons.shoppingBag,
-                    title: 'Nothing here',
-                    body:
-                        "Vous n'avez aucun article dans cette catégorie. "
-                        'Tap «Publish» to get started.',
+                    title: l.myListingsEmptyTitle,
+                    body: l.myListingsEmptyBody,
                   )
                 : GridView.builder(
                     padding: const EdgeInsets.fromLTRB(

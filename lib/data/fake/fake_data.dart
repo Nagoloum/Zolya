@@ -446,7 +446,11 @@ abstract class FakeData {
     ),
   ];
 
-  static const List<Order> mySales = [];
+  static final List<Order> mySales = <Order>[];
+
+  static void addPurchase(Order order) {
+    myPurchases.insert(0, order);
+  }
 
   static final List<Delivery> availableDeliveries = [
     Delivery(

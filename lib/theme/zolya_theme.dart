@@ -219,6 +219,11 @@ class ZolyaTheme {
       colorScheme: scheme,
       iconTheme: IconThemeData(color: fg),
       primaryIconTheme: IconThemeData(color: fg),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: fg,
+        selectionColor: scheme.primary.withValues(alpha: 0.25),
+        selectionHandleColor: scheme.primary,
+      ),
       textTheme: TextTheme(
         displayLarge: ZolyaTypography.displayLarge.copyWith(color: fg),
         displayMedium: ZolyaTypography.displayMedium.copyWith(color: fg),
@@ -292,15 +297,15 @@ class ZolyaTheme {
         iconColor: mutedFg,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(ZolyaRadius.sm),
-          borderSide: BorderSide(color: borderColor, width: 1),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(ZolyaRadius.sm),
-          borderSide: BorderSide(color: borderColor, width: 1),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(ZolyaRadius.sm),
-          borderSide: BorderSide(color: scheme.primary, width: 1.5),
+          borderSide: BorderSide.none,
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(ZolyaRadius.sm),
@@ -312,11 +317,11 @@ class ZolyaTheme {
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(ZolyaRadius.sm),
-          borderSide: BorderSide(color: borderColor.withValues(alpha: 0.5), width: 1),
+          borderSide: BorderSide.none,
         ),
         labelStyle: ZolyaTypography.body.copyWith(color: mutedFg),
         hintStyle: ZolyaTypography.body.copyWith(color: hintFg),
-        floatingLabelStyle: ZolyaTypography.body.copyWith(color: scheme.primary),
+        floatingLabelStyle: ZolyaTypography.body.copyWith(color: fg),
         errorStyle: ZolyaTypography.bodySmall.copyWith(color: scheme.error),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(

@@ -40,6 +40,9 @@ import '../../presentation/screens/sell/my_listings_screen.dart';
 import '../../presentation/screens/offers/my_offers_screen.dart';
 import '../../presentation/screens/about/about_zolya_screen.dart';
 import '../../presentation/screens/invite/invite_friends_screen.dart';
+import '../../presentation/screens/help/customer_service_screen.dart';
+import '../../presentation/screens/help/contact_us_screen.dart';
+import '../../presentation/screens/notifications/notification_preferences_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: RouteNames.splash,
@@ -230,6 +233,20 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RouteNames.inviteFriends,
       pageBuilder: zolyaPageBuilderSimple(() => const InviteFriendsScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.customerService,
+      pageBuilder: zolyaPageBuilderSimple(() => const CustomerServiceScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.contactUs,
+      pageBuilder: zolyaPageBuilderSimple(() => const ContactUsScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.notificationPreferences,
+      pageBuilder: zolyaPageBuilderSimple(
+        () => const NotificationPreferencesScreen(),
+      ),
     ),
   ],
   errorBuilder: (context, state) => Scaffold(

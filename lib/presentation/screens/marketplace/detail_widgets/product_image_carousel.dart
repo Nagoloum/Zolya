@@ -58,14 +58,15 @@ class _ProductImageCarouselState extends State<ProductImageCarousel> {
                 );
               },
             ),
-          Positioned(
-            top: 12,
-            right: 12,
-            child: _FavoriteButton(
-              isFavorite: widget.isFavorite,
-              onTap: widget.onFavoriteTap,
+          if (widget.onFavoriteTap != null)
+            Positioned(
+              top: 12,
+              right: 12,
+              child: _FavoriteButton(
+                isFavorite: widget.isFavorite,
+                onTap: widget.onFavoriteTap,
+              ),
             ),
-          ),
           if (widget.images.length > 1)
             Positioned(
               bottom: 12,

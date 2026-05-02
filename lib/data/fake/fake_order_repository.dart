@@ -38,7 +38,7 @@ class FakeOrderRepository implements OrderRepository {
   @override
   Future<Either<Failure, List<Order>>> getMySales() async {
     await _latency();
-    return const Right(FakeData.mySales);
+    return Right(FakeData.mySales);
   }
 
   @override

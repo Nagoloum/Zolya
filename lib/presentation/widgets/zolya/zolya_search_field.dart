@@ -29,7 +29,6 @@ class ZolyaSearchField extends StatelessWidget {
     final scheme = theme.colorScheme;
     final isLight = theme.brightness == Brightness.light;
     final fillColor = isLight ? ZolyaColors.surface2 : ZolyaColors.surface2Dark;
-    final borderColor = isLight ? ZolyaColors.bordure : ZolyaColors.bordureDark;
     final mutedColor = isLight ? ZolyaColors.texte2 : ZolyaColors.texte2Dark;
     final hintColor = isLight ? ZolyaColors.texte3 : ZolyaColors.texte3Dark;
 
@@ -51,7 +50,7 @@ class ZolyaSearchField extends StatelessWidget {
                   onChanged: onChanged,
                   onSubmitted: onSubmitted,
                   style: ZolyaTypography.body.copyWith(color: scheme.onSurface),
-                  cursorColor: scheme.primary,
+                  cursorColor: scheme.onSurface,
                   decoration: InputDecoration.collapsed(
                     hintText: hint,
                     hintStyle:
@@ -69,7 +68,6 @@ class ZolyaSearchField extends StatelessWidget {
       decoration: BoxDecoration(
         color: fillColor,
         borderRadius: BorderRadius.circular(ZolyaRadius.md),
-        border: Border.all(color: borderColor, width: 0.8),
       ),
       child: inner,
     );

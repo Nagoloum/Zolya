@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../core/i18n/locale_provider.dart';
 import '../../../theme/zolya_theme.dart';
 
 class ZolyaShareSheet extends StatelessWidget {
@@ -41,6 +42,7 @@ class ZolyaShareSheet extends StatelessWidget {
     final isLight = theme.brightness == Brightness.light;
     final mutedColor = isLight ? ZolyaColors.texte2 : ZolyaColors.texte2Dark;
     final borderColor = isLight ? ZolyaColors.bordure : ZolyaColors.bordureDark;
+    final l = context.l10n;
 
     return Container(
       decoration: BoxDecoration(
@@ -74,7 +76,7 @@ class ZolyaShareSheet extends StatelessWidget {
                 ),
               ),
               Text(
-                'Partager',
+                l.shareSheetTitle,
                 style: ZolyaTypography.title.copyWith(color: scheme.onSurface),
                 textAlign: TextAlign.center,
               ),
@@ -172,7 +174,7 @@ class ZolyaShareSheet extends StatelessWidget {
                                   size: 14, color: scheme.primary),
                               const SizedBox(width: 4),
                               Text(
-                                'Copier',
+                                l.shareSheetCopy,
                                 style: ZolyaTypography.bodySmall.copyWith(
                                   color: scheme.primary,
                                   fontWeight: FontWeight.w700,
@@ -194,18 +196,20 @@ class ZolyaShareSheet extends StatelessWidget {
   }
 
   Future<void> _onCopyTap(BuildContext context) async {
+    final l = context.l10n;
     await Clipboard.setData(ClipboardData(text: shareUrl));
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Lien copié dans le presse-papier')),
+      SnackBar(content: Text(l.shareSheetCopied)),
     );
     Navigator.of(context).maybePop();
   }
 
   void _onShareTap(BuildContext context, String channel) {
+    final l = context.l10n;
     Navigator.of(context).maybePop();
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Partage via $channel — bientôt disponible')),
+      SnackBar(content: Text(l.shareSheetSoon(channel))),
     );
   }
 }

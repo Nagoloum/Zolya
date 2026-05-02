@@ -20,10 +20,12 @@ import 'domain/usecases/auth/register_usecase.dart';
 import 'domain/usecases/products/get_products_usecase.dart';
 import 'domain/usecases/orders/create_order_usecase.dart';
 import 'presentation/bloc/auth/auth_bloc.dart';
+import 'presentation/bloc/comments/comments_cubit.dart';
 import 'presentation/bloc/delivery/delivery_bloc.dart';
 import 'presentation/bloc/discounts/discounts_cubit.dart';
 import 'presentation/bloc/favorites/favorites_cubit.dart';
 import 'presentation/bloc/follow/follow_cubit.dart';
+import 'presentation/bloc/notification_prefs/notification_prefs_cubit.dart';
 import 'presentation/bloc/offers/offers_cubit.dart';
 import 'presentation/bloc/order/order_bloc.dart';
 import 'presentation/bloc/product/product_bloc.dart';
@@ -73,6 +75,12 @@ class ZolyaApp extends StatelessWidget {
         ),
         BlocProvider<FollowCubit>(
           create: (_) => FollowCubit(),
+        ),
+        BlocProvider<CommentsCubit>(
+          create: (_) => CommentsCubit(),
+        ),
+        BlocProvider<NotificationPrefsCubit>(
+          create: (_) => NotificationPrefsCubit()..load(),
         ),
         BlocProvider<ThemeCubit>(
           create: (_) => ThemeCubit()..load(),

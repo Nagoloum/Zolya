@@ -42,6 +42,7 @@ class CheckoutScreen extends StatelessWidget {
         addressRepo: sl<AddressBookRepository>(),
         paymentRepo: sl<PaymentMethodsRepository>(),
         subtotal: _resolveSubtotal(),
+        productId: productId,
       )..initDefaults(),
       child: const _CheckoutView(),
     );

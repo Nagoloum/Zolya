@@ -16,6 +16,23 @@ import '../../widgets/zolya/zolya.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
+  Future<void> _onLogoutTap(BuildContext context) async {
+    final l = context.l10n;
+    final confirmed = await ZolyaConfirmDialog.show(
+      context,
+      title: l.logoutConfirmTitle,
+      message: l.logoutConfirmMessage,
+      confirmLabel: l.logoutConfirmYes,
+      cancelLabel: l.logoutConfirmNo,
+      icon: LucideIcons.logOut,
+      destructive: true,
+    );
+    if (!confirmed || !context.mounted) return;
+    context.read<AuthBloc>().add(AuthLogoutRequested());
+    if (!context.mounted) return;
+    context.go(RouteNames.getStarted);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
@@ -45,46 +62,11 @@ class ProfileScreen extends StatelessWidget {
                 label: l.walletShortcut,
               ).animate().fadeIn(delay: 80.ms, duration: 250.ms),
               const SizedBox(height: ZolyaSpacing.xl),
-              _SectionHeader(title: l.sectionMySales),
-              _MenuItem(
-                icon: LucideIcons.shoppingBag,
-                label: l.menuMyArticles,
-                onTap: () => context.push(RouteNames.myListings),
-              ),
-              _MenuItem(
-                icon: LucideIcons.tag,
-                label: l.menuMyDiscounts,
-                onTap: () => context.push(RouteNames.discounts),
-              ),
-              _MenuItem(
-                icon: LucideIcons.receiptText,
-                label: l.menuSalesHistory,
-                onTap: () => context.go(RouteNames.orders),
-              ),
-              const SizedBox(height: ZolyaSpacing.lg),
-              _SectionHeader(title: l.sectionMyPurchases),
-              _MenuItem(
-                icon: LucideIcons.heart,
-                label: l.menuFavorites,
-                onTap: () => context.push(RouteNames.favorites),
-              ),
-              _MenuItem(
-                icon: LucideIcons.history,
-                label: l.menuPurchaseHistory,
-                onTap: () => context.go(RouteNames.orders),
-              ),
-              _MenuItem(
-                icon: LucideIcons.tags,
-                label: l.menuMyOffers,
-                badge: '2',
-                onTap: () => context.push(RouteNames.myOffers),
-              ),
-              const SizedBox(height: ZolyaSpacing.lg),
               _SectionHeader(title: l.sectionAccount),
               _MenuItem(
                 icon: LucideIcons.userRound,
                 label: l.menuPersonalInfo,
-                onTap: () => context.push(RouteNames.editProfile),
+                onTap: () => context.push(RouteNames.myProfile),
               ),
               _MenuItem(
                 icon: LucideIcons.mapPin,
@@ -104,7 +86,55 @@ class ProfileScreen extends StatelessWidget {
               _MenuItem(
                 icon: LucideIcons.bell,
                 label: l.menuNotifications,
-                onTap: () => context.push(RouteNames.notifications),
+                onTap: () => context.push(RouteNames.notificationPreferences),
+              ),
+              const SizedBox(height: ZolyaSpacing.lg),
+              _SectionHeader(title: l.sectionMySales),
+              _MenuItem(
+                icon: LucideIcons.shoppingBag,
+                label: l.menuMyArticles,
+                onTap: () => context.push(RouteNames.myListings),
+              ),
+              _MenuItem(
+                icon: LucideIcons.tag,
+                label: l.menuMyDiscounts,
+                onTap: () => context.push(RouteNames.discounts),
+              ),
+              const SizedBox(height: ZolyaSpacing.lg),
+              _SectionHeader(title: l.sectionMyPurchases),
+              _MenuItem(
+                icon: LucideIcons.heart,
+                label: l.menuFavorites,
+                onTap: () => context.push(RouteNames.favorites),
+              ),
+              _MenuItem(
+                icon: LucideIcons.tags,
+                label: l.menuMyOffers,
+                badge: '2',
+                onTap: () => context.push(RouteNames.myOffers),
+              ),
+              const SizedBox(height: ZolyaSpacing.lg),
+              _SectionHeader(title: l.sectionPreferences),
+              _MenuItem(
+                icon: LucideIcons.sun,
+                label: l.menuTheme,
+                onTap: () => ZolyaThemeSheet.show(context),
+              ),
+              _MenuItem(
+                icon: LucideIcons.languages,
+                label: l.menuLanguage,
+                onTap: () => ZolyaLanguageSheet.show(context),
+              ),
+              _MenuItem(
+                icon: LucideIcons.userPlus,
+                label: l.menuInviteFriend,
+                trailingLabel: l.menuInviteEarn,
+                onTap: () => context.push(RouteNames.inviteFriends),
+              ),
+              _MenuItem(
+                icon: LucideIcons.star,
+                label: l.menuRateApp,
+                onTap: () {},
               ),
               const SizedBox(height: ZolyaSpacing.lg),
               _SectionHeader(title: l.sectionHelp),
@@ -115,44 +145,16 @@ class ProfileScreen extends StatelessWidget {
               ),
               _MenuItem(
                 icon: LucideIcons.headphones,
-                label: l.menuContactUs,
-                onTap: () => context.push(RouteNames.contactSupport),
+                label: l.customerServiceTitle,
+                onTap: () => context.push(RouteNames.customerService),
               ),
               _MenuItem(
-                icon: LucideIcons.star,
-                label: l.menuRateApp,
-                onTap: () {},
-              ),
-              _MenuItem(
-                icon: LucideIcons.userPlus,
-                label: l.menuInviteFriend,
-                trailingLabel: l.menuInviteEarn,
-                onTap: () => context.push(RouteNames.inviteFriends),
+                icon: LucideIcons.send,
+                label: l.menuContactUsCustom,
+                onTap: () => context.push(RouteNames.contactUs),
               ),
               const SizedBox(height: ZolyaSpacing.lg),
-              _SectionHeader(title: l.sectionPreferences),
-              _MenuItem(
-                icon: LucideIcons.settings2,
-                label: l.menuSettings,
-                onTap: () => context.push(RouteNames.settings),
-              ),
-              const SizedBox(height: ZolyaSpacing.lg),
-              _SectionHeader(title: l.sectionLegal),
-              _MenuItem(
-                icon: LucideIcons.fileText,
-                label: l.menuTerms,
-                onTap: () => context.push(RouteNames.legalTerms),
-              ),
-              _MenuItem(
-                icon: LucideIcons.shield,
-                label: l.menuPrivacy,
-                onTap: () => context.push(RouteNames.legalPrivacy),
-              ),
-              _MenuItem(
-                icon: LucideIcons.cookie,
-                label: l.menuCookies,
-                onTap: () => context.push(RouteNames.legalCookies),
-              ),
+              _SectionHeader(title: l.menuAboutZolya),
               _MenuItem(
                 icon: LucideIcons.info,
                 label: l.menuAboutZolya,
@@ -163,8 +165,7 @@ class ProfileScreen extends StatelessWidget {
                 icon: LucideIcons.logOut,
                 label: l.menuLogout,
                 color: Theme.of(context).colorScheme.error,
-                onTap: () =>
-                    context.read<AuthBloc>().add(AuthLogoutRequested()),
+                onTap: () => _onLogoutTap(context),
               ),
               const SizedBox(height: ZolyaSpacing.lg),
               Center(
@@ -177,7 +178,9 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: ZolyaSpacing.xxl),
+              // Extra bottom space so the logout button stays clear of the
+              // floating bottom navigation bar.
+              const SizedBox(height: 110),
             ],
           ),
         );

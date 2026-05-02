@@ -14,6 +14,7 @@ import '../../../domain/entities/product.dart';
 import '../../../domain/entities/user.dart';
 import '../../../theme/zolya_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
+import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../bloc/favorites/favorites_cubit.dart';
 import '../../bloc/favorites/favorites_state.dart';
@@ -445,6 +446,26 @@ class _AboutTab extends StatelessWidget {
   const _AboutTab({required this.user});
   final User? user;
 
+  Future<void> _onDeleteTap(BuildContext context) async {
+    final l = context.l10n;
+    final confirmed = await ZolyaConfirmDialog.show(
+      context,
+      title: l.deleteAccountConfirmTitle,
+      message: l.deleteAccountConfirmMessage,
+      confirmLabel: l.deleteAccountConfirmYes,
+      cancelLabel: l.deleteAccountConfirmNo,
+      icon: LucideIcons.triangleAlert,
+      destructive: true,
+    );
+    if (!confirmed || !context.mounted) return;
+    context.read<AuthBloc>().add(AuthLogoutRequested());
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l.deleteAccountDone)),
+    );
+    context.go(RouteNames.getStarted);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -517,7 +538,16 @@ class _AboutTab extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: ZolyaSpacing.lg),
+        const SizedBox(height: ZolyaSpacing.xxl),
+        ZolyaButton(
+          variant: ZolyaButtonVariant.destructive,
+          label: l.deleteAccountCta,
+          leading: const Icon(LucideIcons.trash2, size: 16),
+          onPressed: () => _onDeleteTap(context),
+          expand: true,
+          size: ZolyaButtonSize.lg,
+        ),
+        const SizedBox(height: ZolyaSpacing.xl),
       ],
     );
   }
