@@ -379,6 +379,14 @@ abstract class AppStrings {
   String get contactUsEmailAddress;
   String get menuContactUsCustom;
 
+  // Help center (hub)
+  String get helpCenterTitle;
+  String get helpCenterIntro;
+  String get helpCenterFaqTitle;
+  String get helpCenterFaqSubtitle;
+  String get helpCenterChatSubtitle;
+  String get helpCenterContactSubtitle;
+
   // About — delete account
   String get deleteAccountCta;
   String get deleteAccountConfirmTitle;

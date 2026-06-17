@@ -213,7 +213,8 @@ class _Content extends StatelessWidget {
             ),
             _isOwner
                 ? _OwnerBottomBar(
-                    onEditTap: () => context.push(RouteNames.createListing),
+                    onEditTap: () =>
+                        context.push(RouteNames.editListingPath(product.id)),
                   )
                 : _BottomBar(
                     product: product,

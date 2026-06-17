@@ -50,6 +50,50 @@ class Product extends Equatable {
   bool get isAvailable => status == ProductStatus.active;
   String get mainImageUrl => imageUrls.isNotEmpty ? imageUrls.first : '';
 
+  Product copyWith({
+    String? id,
+    String? sellerId,
+    String? sellerName,
+    String? sellerAvatarUrl,
+    String? categoryId,
+    String? title,
+    String? description,
+    int? price,
+    String? category,
+    String? size,
+    String? brand,
+    String? color,
+    ProductCondition? condition,
+    ProductStatus? status,
+    List<String>? imageUrls,
+    String? videoUrl,
+    int? viewsCount,
+    int? likesCount,
+    DateTime? createdAt,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      sellerId: sellerId ?? this.sellerId,
+      sellerName: sellerName ?? this.sellerName,
+      sellerAvatarUrl: sellerAvatarUrl ?? this.sellerAvatarUrl,
+      categoryId: categoryId ?? this.categoryId,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      price: price ?? this.price,
+      category: category ?? this.category,
+      size: size ?? this.size,
+      brand: brand ?? this.brand,
+      color: color ?? this.color,
+      condition: condition ?? this.condition,
+      status: status ?? this.status,
+      imageUrls: imageUrls ?? this.imageUrls,
+      videoUrl: videoUrl ?? this.videoUrl,
+      viewsCount: viewsCount ?? this.viewsCount,
+      likesCount: likesCount ?? this.likesCount,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
   String get conditionLabel => switch (condition) {
         ProductCondition.neuf => 'Neuf',
         ProductCondition.veryGood => 'Tres bon etat',

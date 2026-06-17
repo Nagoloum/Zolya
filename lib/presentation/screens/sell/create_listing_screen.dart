@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../config/routes/route_names.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../data/fake/fake_data.dart';
 import '../../../domain/entities/product.dart';
 import '../../../theme/zolya_theme.dart';
 import '../../bloc/create_listing/create_listing_cubit.dart';
@@ -11,7 +13,10 @@ import '../../bloc/create_listing/create_listing_state.dart';
 import '../../widgets/zolya/zolya.dart';
 
 class CreateListingScreen extends StatelessWidget {
-  const CreateListingScreen({super.key});
+  const CreateListingScreen({super.key, this.editProductId});
+
+  /// Non nul → l'écran est en mode édition d'une annonce existante.
+  final String? editProductId;
 
   static const _categories = [
     'Tops',
@@ -31,8 +36,10 @@ class CreateListingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final editProduct =
+        editProductId != null ? FakeData.productById(editProductId!) : null;
     return BlocProvider<CreateListingCubit>(
-      create: (_) => CreateListingCubit(),
+      create: (_) => CreateListingCubit(editProduct: editProduct),
       child: BlocConsumer<CreateListingCubit, CreateListingState>(
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) {
@@ -44,7 +51,11 @@ class CreateListingScreen extends StatelessWidget {
           }
           if (state.status == CreateListingStatus.success) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Article published')),
+              SnackBar(
+                content: Text(
+                  state.isEditing ? 'Listing updated' : 'Article published',
+                ),
+              ),
             );
             if (context.canPop()) {
               context.pop();
@@ -62,14 +73,25 @@ class CreateListingScreen extends StatelessWidget {
     final cubit = context.read<CreateListingCubit>();
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: const ZolyaTopBar(title: 'New listing', centerTitle: true),
+      appBar: ZolyaTopBar(
+        title: state.isEditing ? 'Edit listing' : 'New listing',
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(ZolyaSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (state.existingImageUrls.isNotEmpty) ...[
+              const _SectionLabel('Current photos'),
+              const SizedBox(height: ZolyaSpacing.sm),
+              _ExistingPhotosRow(urls: state.existingImageUrls),
+              const SizedBox(height: ZolyaSpacing.lg),
+            ],
             _SectionLabel(
-              'Photos (${state.images.length}/${AppConstants.maxProductImages})',
+              state.existingImageUrls.isNotEmpty
+                  ? 'Add photos (${state.images.length}/${AppConstants.maxProductImages})'
+                  : 'Photos (${state.images.length}/${AppConstants.maxProductImages})',
             ),
             const SizedBox(height: ZolyaSpacing.sm),
             ZolyaPhotoGrid(
@@ -138,7 +160,7 @@ class CreateListingScreen extends StatelessWidget {
             ),
             const SizedBox(height: ZolyaSpacing.xxl),
             ZolyaButton(
-              label: 'Publish article',
+              label: state.isEditing ? 'Save changes' : 'Publish article',
               onPressed: state.isSubmitting ? null : cubit.submit,
               loading: state.isSubmitting,
               expand: true,
@@ -161,6 +183,42 @@ class _SectionLabel extends StatelessWidget {
     return Text(
       label,
       style: ZolyaTypography.body.copyWith(fontWeight: FontWeight.w700),
+    );
+  }
+}
+
+/// Vignettes (lecture seule) des photos déjà publiées en mode édition.
+class _ExistingPhotosRow extends StatelessWidget {
+  const _ExistingPhotosRow({required this.urls});
+  final List<String> urls;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
+    final placeholderColor =
+        isLight ? ZolyaColors.surface2 : ZolyaColors.surface2Dark;
+
+    return SizedBox(
+      height: 72,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: urls.length,
+        separatorBuilder: (_, __) => const SizedBox(width: ZolyaSpacing.sm),
+        itemBuilder: (_, i) => ClipRRect(
+          borderRadius: BorderRadius.circular(ZolyaRadius.sm),
+          child: SizedBox(
+            width: 72,
+            height: 72,
+            child: CachedNetworkImage(
+              imageUrl: urls[i],
+              fit: BoxFit.cover,
+              placeholder: (_, __) => Container(color: placeholderColor),
+              errorWidget: (_, __, ___) => Container(color: placeholderColor),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

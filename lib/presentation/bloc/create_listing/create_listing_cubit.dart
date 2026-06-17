@@ -2,11 +2,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../data/fake/fake_data.dart';
 import '../../../domain/entities/product.dart';
 import 'create_listing_state.dart';
 
 class CreateListingCubit extends Cubit<CreateListingState> {
-  CreateListingCubit() : super(const CreateListingState());
+  CreateListingCubit({Product? editProduct})
+      : super(_seed(editProduct));
+
+  static CreateListingState _seed(Product? p) {
+    if (p == null) return const CreateListingState();
+    return CreateListingState(
+      editingProductId: p.id,
+      existingImageUrls: p.imageUrls,
+      category: p.category,
+      condition: p.condition,
+      title: p.title,
+      description: p.description,
+      price: p.price.toString(),
+      size: p.size ?? '',
+    );
+  }
 
   final _picker = ImagePicker();
 
@@ -34,7 +50,10 @@ class CreateListingCubit extends Cubit<CreateListingState> {
   void setSize(String v) => emit(state.copyWith(size: v));
 
   String? validate() {
-    if (state.images.isEmpty) return 'Ajoutez au moins une photo';
+    // En édition, les photos déjà publiées suffisent.
+    final hasPhotos =
+        state.images.isNotEmpty || state.existingImageUrls.isNotEmpty;
+    if (!hasPhotos) return 'Ajoutez au moins une photo';
     if (state.category == null) return 'Sélectionnez une catégorie';
     if (state.title.trim().isEmpty) return 'Le titre est requis';
     if (state.description.trim().isEmpty) return 'La description est requise';
@@ -57,6 +76,20 @@ class CreateListingCubit extends Cubit<CreateListingState> {
     emit(state.copyWith(status: CreateListingStatus.submitting));
 
     await Future.delayed(const Duration(milliseconds: 600));
+
+    // Mode édition : persiste les changements dans FakeData.
+    if (state.isEditing) {
+      FakeData.updateProduct(
+        state.editingProductId!,
+        title: state.title.trim(),
+        description: state.description.trim(),
+        price: int.parse(state.price.trim()),
+        category: state.category!,
+        condition: state.condition,
+        size: state.size.trim().isEmpty ? null : state.size.trim(),
+      );
+    }
+
     emit(state.copyWith(status: CreateListingStatus.success));
   }
 }

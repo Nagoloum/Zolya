@@ -8,6 +8,8 @@ enum CreateListingStatus { editing, submitting, success, failure }
 class CreateListingState extends Equatable {
   const CreateListingState({
     this.images = const <XFile>[],
+    this.existingImageUrls = const <String>[],
+    this.editingProductId,
     this.category,
     this.condition = ProductCondition.good,
     this.title = '',
@@ -19,6 +21,12 @@ class CreateListingState extends Equatable {
   });
 
   final List<XFile> images;
+
+  /// URLs des photos déjà publiées (mode édition) — affichées en lecture seule.
+  final List<String> existingImageUrls;
+
+  /// Non nul si l'on édite une annonce existante.
+  final String? editingProductId;
   final String? category;
   final ProductCondition condition;
   final String title;
@@ -29,9 +37,12 @@ class CreateListingState extends Equatable {
   final String? errorMessage;
 
   bool get isSubmitting => status == CreateListingStatus.submitting;
+  bool get isEditing => editingProductId != null;
 
   CreateListingState copyWith({
     List<XFile>? images,
+    List<String>? existingImageUrls,
+    String? editingProductId,
     String? category,
     bool clearCategory = false,
     ProductCondition? condition,
@@ -45,6 +56,8 @@ class CreateListingState extends Equatable {
   }) {
     return CreateListingState(
       images: images ?? this.images,
+      existingImageUrls: existingImageUrls ?? this.existingImageUrls,
+      editingProductId: editingProductId ?? this.editingProductId,
       category: clearCategory ? null : (category ?? this.category),
       condition: condition ?? this.condition,
       title: title ?? this.title,
@@ -60,6 +73,8 @@ class CreateListingState extends Equatable {
   @override
   List<Object?> get props => [
         images,
+        existingImageUrls,
+        editingProductId,
         category,
         condition,
         title,

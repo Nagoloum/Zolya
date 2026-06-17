@@ -452,6 +452,35 @@ abstract class FakeData {
     myPurchases.insert(0, order);
   }
 
+  static Product? productById(String id) {
+    for (final p in products) {
+      if (p.id == id) return p;
+    }
+    return null;
+  }
+
+  /// Met à jour les champs éditables d'une annonce existante (phase FakeData).
+  static void updateProduct(
+    String id, {
+    required String title,
+    required String description,
+    required int price,
+    required String category,
+    required ProductCondition condition,
+    String? size,
+  }) {
+    final index = products.indexWhere((p) => p.id == id);
+    if (index == -1) return;
+    products[index] = products[index].copyWith(
+      title: title,
+      description: description,
+      price: price,
+      category: category,
+      condition: condition,
+      size: size,
+    );
+  }
+
   static final List<Delivery> availableDeliveries = [
     Delivery(
       id: 'd-001',

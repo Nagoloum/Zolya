@@ -403,6 +403,14 @@ class AppStringsEn implements AppStrings {
   @override String get contactUsEmailAddress => 'support@zolya.app';
   @override String get menuContactUsCustom => 'Contact us';
 
+  // Help center (hub)
+  @override String get helpCenterTitle => 'Help center';
+  @override String get helpCenterIntro => 'How can we help you today?';
+  @override String get helpCenterFaqTitle => 'FAQ';
+  @override String get helpCenterFaqSubtitle => 'Find quick answers to common questions';
+  @override String get helpCenterChatSubtitle => 'Chat with our assistant';
+  @override String get helpCenterContactSubtitle => 'Send us a message or call us';
+
   // About — delete account
   @override String get deleteAccountCta => 'Delete account';
   @override String get deleteAccountConfirmTitle => 'Delete your account?';

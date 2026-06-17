@@ -129,15 +129,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ZolyaSocialButton(
                     provider: ZolyaSocialProvider.google,
                     label: l.signUpWithGoogle,
-                    onPressed: () =>
-                        context.showSnackBar(l.featureComingSoon),
+                    onPressed: () {},
                   ),
                   const SizedBox(height: ZolyaSpacing.sm),
                   ZolyaSocialButton(
                     provider: ZolyaSocialProvider.apple,
                     label: l.signUpWithApple,
-                    onPressed: () =>
-                        context.showSnackBar(l.featureComingSoon),
+                    onPressed: () {},
                   ),
                   const SizedBox(height: ZolyaSpacing.xl),
                   RegisterFooter(onLoginTap: () {

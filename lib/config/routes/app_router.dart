@@ -46,6 +46,7 @@ import '../../presentation/screens/about/about_zolya_screen.dart';
 import '../../presentation/screens/invite/invite_friends_screen.dart';
 import '../../presentation/screens/help/customer_service_screen.dart';
 import '../../presentation/screens/help/contact_us_screen.dart';
+import '../../presentation/screens/help/help_center_screen.dart';
 import '../../presentation/screens/notifications/notification_preferences_screen.dart';
 
 /// Préfixes de routes nécessitant une authentification.
@@ -192,6 +193,14 @@ GoRouter createAppRouter(AuthBloc authBloc) => GoRouter(
       pageBuilder: zolyaPageBuilderSimple(() => const CreateListingScreen()),
     ),
     GoRoute(
+      path: RouteNames.editListing,
+      pageBuilder: zolyaPageBuilder(
+        (context, state) => CreateListingScreen(
+          editProductId: state.pathParameters['id'],
+        ),
+      ),
+    ),
+    GoRoute(
       path: RouteNames.legalTerms,
       pageBuilder: zolyaPageBuilderSimple(() => const TermsScreen()),
     ),
@@ -254,6 +263,10 @@ GoRouter createAppRouter(AuthBloc authBloc) => GoRouter(
     GoRoute(
       path: RouteNames.faq,
       pageBuilder: zolyaPageBuilderSimple(() => const FaqScreen()),
+    ),
+    GoRoute(
+      path: RouteNames.helpCenter,
+      pageBuilder: zolyaPageBuilderSimple(() => const HelpCenterScreen()),
     ),
     GoRoute(
       path: RouteNames.discounts,
