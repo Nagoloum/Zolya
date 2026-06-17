@@ -94,7 +94,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                   onSubmitted: (_) => _submit(),
                 ),
                 const Spacer(),
-                ZolyaButton(
+                ZolyaAsyncButton(
                   label: l.paymentAddCta,
                   onPressed: _submit,
                   expand: true,

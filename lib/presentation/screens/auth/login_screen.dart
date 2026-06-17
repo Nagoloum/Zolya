@@ -124,13 +124,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   ZolyaSocialButton(
                     provider: ZolyaSocialProvider.google,
                     label: l.signInWithGoogle,
-                    onPressed: () {},
+                    onPressed: () =>
+                        context.showSnackBar(l.featureComingSoon),
                   ),
                   const SizedBox(height: ZolyaSpacing.sm),
                   ZolyaSocialButton(
                     provider: ZolyaSocialProvider.apple,
                     label: l.signInWithApple,
-                    onPressed: () {},
+                    onPressed: () =>
+                        context.showSnackBar(l.featureComingSoon),
                   ),
                   const SizedBox(height: ZolyaSpacing.xl),
                   _SignUpLink(onTap: () => context.push(RouteNames.register)),

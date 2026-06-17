@@ -496,7 +496,101 @@ abstract class FakeData {
       status: DeliveryStatus.available,
       createdAt: DateTime.now().subtract(const Duration(minutes: 20)),
     ),
+    Delivery(
+      id: 'd-002',
+      orderId: 'o-011',
+      buyerName: 'Aïcha M.',
+      buyerPhone: '+237 6 90 11 22 33',
+      sellerName: 'Boutique Nadia',
+      sellerPhone: '+237 6 71 00 88 99',
+      pickupAddress: 'Makepe, Rue 3.045, résidence Les Jardins',
+      dropoffAddress: 'Bonamoussadi, Rue des Palmiers',
+      dropoffNeighborhood: 'Bonamoussadi',
+      fee: 500,
+      status: DeliveryStatus.available,
+      createdAt: DateTime.now().subtract(const Duration(minutes: 8)),
+    ),
+    Delivery(
+      id: 'd-003',
+      orderId: 'o-012',
+      buyerName: 'Junior K.',
+      buyerPhone: '+237 6 55 77 33 11',
+      sellerName: 'Vintage Douala',
+      sellerPhone: '+237 6 99 44 22 00',
+      pickupAddress: 'Akwa, Boulevard de la Liberté',
+      dropoffAddress: 'Deido, Rue de la Joie',
+      dropoffNeighborhood: 'Deido',
+      fee: 500,
+      status: DeliveryStatus.available,
+      createdAt: DateTime.now().subtract(const Duration(minutes: 3)),
+    ),
   ];
+
+  static Delivery? deliveryById(String id) {
+    for (final d in availableDeliveries) {
+      if (d.id == id) return d;
+    }
+    return null;
+  }
+
+  /// Livraisons acceptées par le livreur courant.
+  static List<Delivery> get myDeliveries => availableDeliveries
+      .where((d) =>
+          d.delivererId == currentUser.id &&
+          d.status != DeliveryStatus.available)
+      .toList(growable: false);
+
+  /// Le livreur accepte une course disponible.
+  static void acceptDelivery(String id) {
+    final i = availableDeliveries.indexWhere((d) => d.id == id);
+    if (i == -1) return;
+    final d = availableDeliveries[i];
+    availableDeliveries[i] = Delivery(
+      id: d.id,
+      orderId: d.orderId,
+      buyerName: d.buyerName,
+      buyerPhone: d.buyerPhone,
+      sellerName: d.sellerName,
+      sellerPhone: d.sellerPhone,
+      pickupAddress: d.pickupAddress,
+      dropoffAddress: d.dropoffAddress,
+      dropoffNeighborhood: d.dropoffNeighborhood,
+      fee: d.fee,
+      status: DeliveryStatus.assigned,
+      delivererId: currentUser.id,
+      createdAt: d.createdAt,
+    );
+  }
+
+  /// Fait progresser le statut : assigned → pickedUp → inProgress → completed.
+  static void advanceDelivery(String id) {
+    final i = availableDeliveries.indexWhere((d) => d.id == id);
+    if (i == -1) return;
+    final d = availableDeliveries[i];
+    final next = switch (d.status) {
+      DeliveryStatus.assigned => DeliveryStatus.pickedUp,
+      DeliveryStatus.pickedUp => DeliveryStatus.inProgress,
+      DeliveryStatus.inProgress => DeliveryStatus.completed,
+      _ => d.status,
+    };
+    availableDeliveries[i] = Delivery(
+      id: d.id,
+      orderId: d.orderId,
+      buyerName: d.buyerName,
+      buyerPhone: d.buyerPhone,
+      sellerName: d.sellerName,
+      sellerPhone: d.sellerPhone,
+      pickupAddress: d.pickupAddress,
+      dropoffAddress: d.dropoffAddress,
+      dropoffNeighborhood: d.dropoffNeighborhood,
+      fee: d.fee,
+      status: next,
+      delivererId: d.delivererId,
+      createdAt: d.createdAt,
+      completedAt:
+          next == DeliveryStatus.completed ? DateTime.now() : d.completedAt,
+    );
+  }
 
   static const List<AddressUi> addresses = [
     AddressUi(

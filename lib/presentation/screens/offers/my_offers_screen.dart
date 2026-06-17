@@ -293,48 +293,89 @@ class _OfferCard extends StatelessWidget {
           ],
           if (offer.status == OfferStatus.pending) ...[
             const SizedBox(height: ZolyaSpacing.md),
-            if (isReceived)
-              Row(
-                children: [
-                  Expanded(
-                    child: ZolyaButton(
-                      variant: ZolyaButtonVariant.outline,
-                      label: 'Decline',
-                      onPressed: () => context
-                          .read<OffersCubit>()
-                          .respond(
-                            offerId: offer.id,
-                            newStatus: OfferStatus.declined,
-                          ),
-                      expand: true,
-                    ),
-                  ),
-                  const SizedBox(width: ZolyaSpacing.sm),
-                  Expanded(
-                    child: ZolyaButton(
-                      label: 'Accept',
-                      onPressed: () => context
-                          .read<OffersCubit>()
-                          .respond(
-                            offerId: offer.id,
-                            newStatus: OfferStatus.accepted,
-                          ),
-                      expand: true,
-                    ),
-                  ),
-                ],
-              )
-            else
-              ZolyaButton(
-                variant: ZolyaButtonVariant.outline,
-                label: "Retirer l'offre",
-                onPressed: () =>
-                    context.read<OffersCubit>().withdraw(offer.id),
-                expand: true,
-              ),
+            _OfferActions(offer: offer, isReceived: isReceived),
           ],
         ],
       ),
+    );
+  }
+}
+
+/// Boutons d'action d'une offre en attente (accepter / refuser / retirer).
+///
+/// Stateful pour porter un drapeau de chargement : pendant l'appel async au
+/// [OffersCubit], le bouton cliqué passe en `loading` et tous les boutons sont
+/// désactivés, ce qui empêche tout double-clic ou action concurrente.
+class _OfferActions extends StatefulWidget {
+  const _OfferActions({required this.offer, required this.isReceived});
+  final Offer offer;
+  final bool isReceived;
+
+  @override
+  State<_OfferActions> createState() => _OfferActionsState();
+}
+
+class _OfferActionsState extends State<_OfferActions> {
+  /// Action en cours : null = aucune. Sert aussi à savoir quel bouton anime.
+  OfferStatus? _busyAction;
+  bool _withdrawing = false;
+
+  bool get _busy => _busyAction != null || _withdrawing;
+
+  Future<void> _respond(OfferStatus newStatus) async {
+    if (_busy) return;
+    setState(() => _busyAction = newStatus);
+    try {
+      await context
+          .read<OffersCubit>()
+          .respond(offerId: widget.offer.id, newStatus: newStatus);
+    } finally {
+      if (mounted) setState(() => _busyAction = null);
+    }
+  }
+
+  Future<void> _withdraw() async {
+    if (_busy) return;
+    setState(() => _withdrawing = true);
+    try {
+      await context.read<OffersCubit>().withdraw(widget.offer.id);
+    } finally {
+      if (mounted) setState(() => _withdrawing = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.isReceived) {
+      return Row(
+        children: [
+          Expanded(
+            child: ZolyaButton(
+              variant: ZolyaButtonVariant.outline,
+              label: 'Decline',
+              onPressed: _busy ? null : () => _respond(OfferStatus.declined),
+              loading: _busyAction == OfferStatus.declined,
+              expand: true,
+            ),
+          ),
+          const SizedBox(width: ZolyaSpacing.sm),
+          Expanded(
+            child: ZolyaButton(
+              label: 'Accept',
+              onPressed: _busy ? null : () => _respond(OfferStatus.accepted),
+              loading: _busyAction == OfferStatus.accepted,
+              expand: true,
+            ),
+          ),
+        ],
+      );
+    }
+    return ZolyaButton(
+      variant: ZolyaButtonVariant.outline,
+      label: "Retirer l'offre",
+      onPressed: _busy ? null : _withdraw,
+      loading: _withdrawing,
+      expand: true,
     );
   }
 }

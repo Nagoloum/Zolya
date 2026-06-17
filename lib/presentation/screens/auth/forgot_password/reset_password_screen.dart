@@ -37,12 +37,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     context.hideKeyboard();
 
     final l = context.l10n;
-    ZolyaSuccessDialog.show(
+    await ZolyaSuccessDialog.show(
       context,
       title: l.passwordChangedTitle,
       message: l.passwordChangedMessage,
@@ -102,7 +102,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ),
               ).animate().fadeIn(delay: 200.ms, duration: 350.ms),
               const Spacer(),
-              ZolyaButton(
+              ZolyaAsyncButton(
                 label: l.continueLabel,
                 onPressed: _submit,
                 expand: true,

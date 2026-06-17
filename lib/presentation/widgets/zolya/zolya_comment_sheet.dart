@@ -3,6 +3,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/i18n/locale_provider.dart';
 import '../../../theme/zolya_theme.dart';
+import 'zolya_async_button.dart';
 import 'zolya_button.dart';
 
 class ZolyaCommentSheet extends StatefulWidget {
@@ -240,10 +241,11 @@ class _ZolyaCommentSheetState extends State<ZolyaCommentSheet> {
                 ),
               ),
               const SizedBox(height: ZolyaSpacing.lg),
-              ZolyaButton(
+              ZolyaAsyncButton(
                 label: l.commentsValidationConfirm,
                 leading: const Icon(LucideIcons.send, size: 18),
-                onPressed: canSubmit ? _handleSubmit : null,
+                onPressed: _handleSubmit,
+                enabled: canSubmit,
                 expand: true,
                 size: ZolyaButtonSize.lg,
               ),

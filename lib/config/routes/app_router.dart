@@ -24,6 +24,7 @@ import '../../presentation/screens/orders/order_detail_screen.dart';
 import '../../presentation/screens/checkout/checkout_screen.dart';
 import '../../presentation/screens/profile/profile_screen.dart';
 import '../../presentation/screens/delivery/delivery_screen.dart';
+import '../../presentation/screens/delivery/delivery_detail_screen.dart';
 import '../../presentation/screens/legal/terms_screen.dart';
 import '../../presentation/screens/legal/privacy_policy_screen.dart';
 import '../../presentation/screens/legal/cookie_use_screen.dart';
@@ -177,6 +178,16 @@ GoRouter createAppRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: RouteNames.deliveryDashboard,
           pageBuilder: zolyaPageBuilderSimple(() => const DeliveryScreen()),
+          routes: [
+            GoRoute(
+              path: ':id',
+              pageBuilder: zolyaPageBuilder(
+                (context, state) => DeliveryDetailScreen(
+                  deliveryId: state.pathParameters['id']!,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     ),

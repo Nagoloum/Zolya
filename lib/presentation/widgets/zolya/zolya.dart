@@ -2,6 +2,7 @@ library;
 
 export 'zolya_accordion.dart';
 export 'zolya_alert.dart';
+export 'zolya_async_button.dart';
 export 'zolya_avatar.dart';
 export 'zolya_badge.dart';
 export 'zolya_button.dart';

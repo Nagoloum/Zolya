@@ -221,8 +221,9 @@ class _Content extends StatelessWidget {
                     priceLabel: l.detailsPrice,
                     ctaLabel: l.detailsCheckout,
                     onOfferTap: () => _onOfferTap(context),
-                    onCheckoutTap: () =>
-                        context.push(RouteNames.checkoutPath(product.id)),
+                    onCheckoutTap: () async {
+                      await context.push(RouteNames.checkoutPath(product.id));
+                    },
                   ),
           ],
         ),
@@ -850,7 +851,7 @@ class _ProductHorizontalList extends StatelessWidget {
   }
 }
 
-class _BottomBar extends StatelessWidget {
+class _BottomBar extends StatefulWidget {
   const _BottomBar({
     required this.product,
     required this.priceLabel,
@@ -863,7 +864,24 @@ class _BottomBar extends StatelessWidget {
   final String priceLabel;
   final String ctaLabel;
   final VoidCallback onOfferTap;
-  final VoidCallback onCheckoutTap;
+  final Future<void> Function() onCheckoutTap;
+
+  @override
+  State<_BottomBar> createState() => _BottomBarState();
+}
+
+class _BottomBarState extends State<_BottomBar> {
+  bool _navigating = false;
+
+  Future<void> _onCheckoutTap() async {
+    if (_navigating) return;
+    setState(() => _navigating = true);
+    try {
+      await widget.onCheckoutTap();
+    } finally {
+      if (mounted) setState(() => _navigating = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -887,7 +905,7 @@ class _BottomBar extends StatelessWidget {
                 variant: ZolyaButtonVariant.outline,
                 label: 'Make an offer',
                 leading: const Icon(LucideIcons.tag, size: 18),
-                onPressed: onOfferTap,
+                onPressed: _navigating ? null : widget.onOfferTap,
                 size: ZolyaButtonSize.lg,
                 expand: true,
               ),
@@ -895,9 +913,10 @@ class _BottomBar extends StatelessWidget {
             const SizedBox(width: ZolyaSpacing.sm + 2),
             Expanded(
               child: ZolyaButton(
-                label: ctaLabel,
+                label: widget.ctaLabel,
                 leading: const Icon(LucideIcons.shoppingBag, size: 18),
-                onPressed: onCheckoutTap,
+                onPressed: _navigating ? null : _onCheckoutTap,
+                loading: _navigating,
                 size: ZolyaButtonSize.lg,
                 expand: true,
               ),

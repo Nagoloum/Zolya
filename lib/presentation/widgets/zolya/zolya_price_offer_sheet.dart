@@ -6,6 +6,7 @@ import '../../../core/i18n/app_strings.dart';
 import '../../../core/i18n/locale_provider.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../theme/zolya_theme.dart';
+import 'zolya_async_button.dart';
 import 'zolya_button.dart';
 
 class ZolyaPriceOfferSheet extends StatefulWidget {
@@ -18,13 +19,16 @@ class ZolyaPriceOfferSheet extends StatefulWidget {
 
   final String productTitle;
   final int productPrice;
-  final ValueChanged<int> onSubmit;
+
+  /// Appelé à la validation. Peut être asynchrone : le bouton reste en
+  /// chargement (et non cliquable) tant que le Future n'est pas résolu.
+  final Future<void> Function(int amount) onSubmit;
 
   static Future<void> show(
     BuildContext context, {
     required String productTitle,
     required int productPrice,
-    required ValueChanged<int> onSubmit,
+    required Future<void> Function(int amount) onSubmit,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -99,15 +103,15 @@ class _ZolyaPriceOfferSheetState extends State<ZolyaPriceOfferSheet> {
     });
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     final l = context.l10n;
     final err = _validate(_amount, l);
     if (err != null) {
       setState(() => _error = err);
       return;
     }
-    widget.onSubmit(_amount);
-    Navigator.of(context).maybePop();
+    await widget.onSubmit(_amount);
+    if (mounted) Navigator.of(context).maybePop();
   }
 
   @override
@@ -306,9 +310,10 @@ class _ZolyaPriceOfferSheetState extends State<ZolyaPriceOfferSheet> {
                 ),
               ),
               const SizedBox(height: ZolyaSpacing.xl),
-              ZolyaButton(
+              ZolyaAsyncButton(
                 label: l.priceOfferSendCta,
-                onPressed: _error == null ? _submit : null,
+                onPressed: _submit,
+                enabled: _error == null,
                 expand: true,
                 size: ZolyaButtonSize.lg,
               ),
