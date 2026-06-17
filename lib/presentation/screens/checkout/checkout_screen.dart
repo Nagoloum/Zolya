@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../config/routes/route_names.dart';
 import '../../../core/di/injection.dart';
+import '../../../core/extensions/context_extensions.dart';
 import '../../../core/i18n/locale_provider.dart';
 import '../../../data/fake/fake_data.dart';
 import '../../../data/fake/ui_models.dart';
@@ -89,8 +90,18 @@ class _CheckoutViewState extends State<_CheckoutView> {
 
   Future<void> _placeOrder(BuildContext context) async {
     final l = context.l10n;
-    final ok = await context.read<CheckoutCubit>().placeOrder();
-    if (!ok || !context.mounted) return;
+    final cubit = context.read<CheckoutCubit>();
+    final ok = await cubit.placeOrder();
+    if (!context.mounted) return;
+    if (!ok) {
+      final code = cubit.state.errorMessage;
+      context.showErrorSnackBar(
+        code == CheckoutCubit.errNoPayment
+            ? l.checkoutErrorNoPayment
+            : l.checkoutErrorGeneric,
+      );
+      return;
+    }
     await ZolyaSuccessDialog.show(
       context,
       title: l.checkoutSuccessTitle,

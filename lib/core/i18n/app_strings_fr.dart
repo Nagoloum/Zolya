@@ -36,6 +36,7 @@ class AppStringsFr implements AppStrings {
   @override String get loginCta => 'Se connecter';
   @override String get signInWithGoogle => 'Se connecter avec Google';
   @override String get signInWithApple => 'Se connecter avec Apple';
+  @override String get featureComingSoon => 'Bientôt disponible';
   @override String get forgotPassword => 'Mot de passe oublié ?';
   @override String get noAccount => "Pas de compte ? ";
   @override String get signUp => "S'inscrire";
@@ -52,6 +53,8 @@ class AppStringsFr implements AppStrings {
   @override String get resetCodeIntro => 'Entrez le code à 5 chiffres reçu par SMS sur votre téléphone';
   @override String get resetCodeResendQuestion => 'Code non reçu ?';
   @override String get resetCodeResendLink => 'Renvoyer le code';
+  @override String get resetCodeResent => 'Un nouveau code a été envoyé';
+  @override String resendCodeIn(int seconds) => 'Renvoyer dans ${seconds}s';
   @override String get resetPasswordTitle => 'Réinitialiser le mot de passe';
   @override String get resetPasswordIntro => 'Définissez un nouveau mot de passe pour votre compte afin de vous reconnecter.';
   @override String get newPasswordLabel => 'Mot de passe';
@@ -145,6 +148,8 @@ class AppStringsFr implements AppStrings {
   @override String get checkoutSuccessTitle => 'Félicitations !';
   @override String get checkoutSuccessMessage => 'Votre commande a été passée.';
   @override String get checkoutTrackOrder => 'Suivre ma commande';
+  @override String get checkoutErrorGeneric => 'Le paiement a échoué. Veuillez réessayer.';
+  @override String get checkoutErrorNoPayment => 'Veuillez sélectionner un moyen de paiement.';
 
   @override String get addressTitle => 'Adresse';
   @override String get addressSaved => 'Adresses enregistrées';
@@ -444,4 +449,7 @@ class AppStringsFr implements AppStrings {
   @override String get orderDetailDelivery => 'Livraison';
   @override String get orderDetailTotal => 'Total';
   @override String get orderDetailTrackOrder => 'Suivre la commande';
+  @override String get orderTrackingTitle => 'Suivi de la commande';
+  @override String get orderTrackingPreparing => 'Préparation de votre commande';
+  @override String get orderTrackingDeliveredHint => 'Votre commande a été livrée.';
 }

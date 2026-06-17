@@ -48,7 +48,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          context.go(RouteNames.marketplace);
+          // Revenir à la page demandée avant le guard, sinon marketplace.
+          final from = GoRouterState.of(context).uri.queryParameters['from'];
+          context.go(
+            from != null && from.isNotEmpty
+                ? Uri.decodeComponent(from)
+                : RouteNames.marketplace,
+          );
         } else if (state is AuthFailureState) {
           context.showErrorSnackBar(state.message);
         }
@@ -118,13 +124,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   ZolyaSocialButton(
                     provider: ZolyaSocialProvider.google,
                     label: l.signInWithGoogle,
-                    onPressed: () {},
+                    onPressed: () =>
+                        context.showSnackBar(l.featureComingSoon),
                   ),
                   const SizedBox(height: ZolyaSpacing.sm),
                   ZolyaSocialButton(
                     provider: ZolyaSocialProvider.apple,
                     label: l.signInWithApple,
-                    onPressed: () {},
+                    onPressed: () =>
+                        context.showSnackBar(l.featureComingSoon),
                   ),
                   const SizedBox(height: ZolyaSpacing.xl),
                   _SignUpLink(onTap: () => context.push(RouteNames.register)),

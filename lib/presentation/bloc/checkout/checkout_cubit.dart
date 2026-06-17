@@ -66,47 +66,69 @@ class CheckoutCubit extends Cubit<CheckoutState> {
 
   void setPromoCode(String code) => emit(state.copyWith(promoCode: code));
 
-  Future<bool> placeOrder() async {
-    emit(state.copyWith(status: CheckoutStatus.placing, clearError: true));
-    await Future.delayed(const Duration(milliseconds: 600));
+  /// Codes d'erreur renvoyés par [placeOrder] ; l'UI les traduit via l10n.
+  static const String errNoPayment = 'no_payment';
+  static const String errGeneric = 'generic';
 
-    if (productId != null) {
-      final product = FakeData.products.firstWhere(
-        (p) => p.id == productId,
-        orElse: () => FakeData.products.first,
-      );
-      final user = FakeData.currentUser;
-      final addressLabel = state.address?.fullAddress ?? 'Douala';
-      final commission = (product.price * 0.15).round();
-      final order = Order(
-        id: 'o-${DateTime.now().microsecondsSinceEpoch}',
-        orderNumber:
-            'ZLY-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
-        buyerId: user.id,
-        sellerId: product.sellerId,
-        productId: product.id,
-        productTitle: product.title,
-        productImageUrl: product.mainImageUrl,
-        articlePrice: state.subtotal,
-        deliveryFee: state.shippingFee,
-        totalAmount: state.total,
-        zolyaCommission: commission,
-        sellerReceives: product.price - commission,
-        status: OrderStatus.paid,
-        deliveryAddress: DeliveryAddress(
-          neighborhood: addressLabel.split(',').first.trim(),
-          street: addressLabel,
-          phone: user.phone,
-          zone: DeliveryZone.zone2,
-        ),
-        createdAt: DateTime.now(),
-        paidAt: DateTime.now(),
-      );
-      FakeData.addPurchase(order);
+  Future<bool> placeOrder() async {
+    // Garde : un moyen de paiement doit être sélectionné.
+    if (state.method == null) {
+      emit(state.copyWith(
+        status: CheckoutStatus.failure,
+        errorMessage: errNoPayment,
+      ));
+      return false;
     }
 
-    emit(state.copyWith(status: CheckoutStatus.success));
-    return true;
+    emit(state.copyWith(status: CheckoutStatus.placing, clearError: true));
+
+    try {
+      await Future.delayed(const Duration(milliseconds: 600));
+
+      if (productId != null) {
+        final product = FakeData.products.firstWhere(
+          (p) => p.id == productId,
+          orElse: () => FakeData.products.first,
+        );
+        final user = FakeData.currentUser;
+        final addressLabel = state.address?.fullAddress ?? 'Douala';
+        final commission = (product.price * 0.15).round();
+        final order = Order(
+          id: 'o-${DateTime.now().microsecondsSinceEpoch}',
+          orderNumber:
+              'ZLY-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
+          buyerId: user.id,
+          sellerId: product.sellerId,
+          productId: product.id,
+          productTitle: product.title,
+          productImageUrl: product.mainImageUrl,
+          articlePrice: state.subtotal,
+          deliveryFee: state.shippingFee,
+          totalAmount: state.total,
+          zolyaCommission: commission,
+          sellerReceives: product.price - commission,
+          status: OrderStatus.paid,
+          deliveryAddress: DeliveryAddress(
+            neighborhood: addressLabel.split(',').first.trim(),
+            street: addressLabel,
+            phone: user.phone,
+            zone: DeliveryZone.zone2,
+          ),
+          createdAt: DateTime.now(),
+          paidAt: DateTime.now(),
+        );
+        FakeData.addPurchase(order);
+      }
+
+      emit(state.copyWith(status: CheckoutStatus.success));
+      return true;
+    } catch (_) {
+      emit(state.copyWith(
+        status: CheckoutStatus.failure,
+        errorMessage: errGeneric,
+      ));
+      return false;
+    }
   }
 }
 

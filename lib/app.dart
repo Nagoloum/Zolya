@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'config/routes/app_router.dart';
 import 'core/di/injection.dart';
@@ -94,8 +95,22 @@ class ZolyaApp extends StatelessWidget {
   }
 }
 
-class _ZolyaMaterialApp extends StatelessWidget {
+class _ZolyaMaterialApp extends StatefulWidget {
   const _ZolyaMaterialApp();
+
+  @override
+  State<_ZolyaMaterialApp> createState() => _ZolyaMaterialAppState();
+}
+
+class _ZolyaMaterialAppState extends State<_ZolyaMaterialApp> {
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    // Créé une seule fois : le router câble le guard d'auth sur AuthBloc.
+    _router = createAppRouter(context.read<AuthBloc>());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +126,7 @@ class _ZolyaMaterialApp extends StatelessWidget {
             theme: ZolyaTheme.light,
             darkTheme: ZolyaTheme.dark,
             themeMode: mode,
-            routerConfig: appRouter,
+            routerConfig: _router,
             builder: (context, child) => ShadAppBuilder(child: child),
           ),
         );

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
@@ -85,33 +87,61 @@ class _ResetCodeScreenState extends State<ResetCodeScreen> {
   }
 }
 
-class _ResendRow extends StatelessWidget {
+class _ResendRow extends StatefulWidget {
   const _ResendRow();
+
+  @override
+  State<_ResendRow> createState() => _ResendRowState();
+}
+
+class _ResendRowState extends State<_ResendRow> {
+  static const _cooldownSeconds = 30;
+  Timer? _timer;
+  int _remaining = 0;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _resend() {
+    if (_remaining > 0) return;
+    // FakeData phase: pas de backend, on confirme l'envoi et on démarre le cooldown.
+    context.showSnackBar(context.l10n.resetCodeResent);
+    setState(() => _remaining = _cooldownSeconds);
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      setState(() => _remaining--);
+      if (_remaining <= 0) timer.cancel();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
+    final mutedColor = isLight ? ZolyaColors.texte2 : ZolyaColors.texte2Dark;
+    final waiting = _remaining > 0;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Builder(builder: (context) {
-          final theme = Theme.of(context);
-          final isLight = theme.brightness == Brightness.light;
-          final mutedColor =
-              isLight ? ZolyaColors.texte2 : ZolyaColors.texte2Dark;
-          return Text(
-            '${l.resetCodeResendQuestion} ',
-            style: ZolyaTypography.body.copyWith(color: mutedColor),
-          );
-        }),
+        Text(
+          '${l.resetCodeResendQuestion} ',
+          style: ZolyaTypography.body.copyWith(color: mutedColor),
+        ),
         GestureDetector(
-          onTap: () {
-
-          },
+          onTap: waiting ? null : _resend,
           child: Text(
-            l.resetCodeResendLink,
+            waiting ? l.resendCodeIn(_remaining) : l.resetCodeResendLink,
             style: ZolyaTypography.body.copyWith(
-              color: Theme.of(context).colorScheme.primary,
+              color: waiting ? mutedColor : theme.colorScheme.primary,
               fontWeight: FontWeight.w700,
             ),
           ),

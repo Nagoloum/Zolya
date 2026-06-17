@@ -143,7 +143,7 @@ class OrderDetailScreen extends StatelessWidget {
               ZolyaButton(
                 label: l.orderDetailTrackOrder,
                 leading: const Icon(LucideIcons.truck, size: 18),
-                onPressed: () {},
+                onPressed: () => _OrderTrackingSheet.show(context, order),
                 expand: true,
                 size: ZolyaButtonSize.lg,
               ),
@@ -306,6 +306,179 @@ class _InfoRow {
               style: ZolyaTypography.body.copyWith(
                 color: scheme.onSurface,
                 fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Une étape du suivi de livraison.
+class _TrackStep {
+  const _TrackStep({required this.label, required this.icon});
+  final String label;
+  final IconData icon;
+}
+
+class _OrderTrackingSheet extends StatelessWidget {
+  const _OrderTrackingSheet({required this.order});
+  final Order order;
+
+  static Future<void> show(BuildContext context, Order order) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _OrderTrackingSheet(order: order),
+    );
+  }
+
+  /// Indice de l'étape atteinte (les étapes <= currentStep sont validées).
+  int _currentStep(OrderStatus status) {
+    return switch (status) {
+      OrderStatus.pendingPayment => 0,
+      OrderStatus.paid => 0,
+      OrderStatus.awaitingCourier || OrderStatus.assignedToDeliverer => 1,
+      OrderStatus.pickedUp || OrderStatus.inDelivery => 2,
+      OrderStatus.delivered => 3,
+      OrderStatus.cancelled ||
+      OrderStatus.refunded ||
+      OrderStatus.disputed =>
+        0,
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final isLight = theme.brightness == Brightness.light;
+    final mutedColor = isLight ? ZolyaColors.texte2 : ZolyaColors.texte2Dark;
+
+    final steps = <_TrackStep>[
+      _TrackStep(label: l.orderStatusPaid, icon: LucideIcons.creditCard),
+      _TrackStep(label: l.orderTrackingPreparing, icon: LucideIcons.package),
+      _TrackStep(label: l.orderStatusInDelivery, icon: LucideIcons.truck),
+      _TrackStep(label: l.orderStatusDelivered, icon: LucideIcons.circleCheck),
+    ];
+    final current = _currentStep(order.status);
+
+    return SafeArea(
+      child: Container(
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(ZolyaRadius.lg),
+          ),
+        ),
+        padding: const EdgeInsets.fromLTRB(
+          ZolyaSpacing.lg,
+          ZolyaSpacing.md,
+          ZolyaSpacing.lg,
+          ZolyaSpacing.lg,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: mutedColor.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: ZolyaSpacing.lg),
+            Text(
+              l.orderTrackingTitle,
+              style: ZolyaTypography.title.copyWith(color: scheme.onSurface),
+            ),
+            const SizedBox(height: ZolyaSpacing.xs),
+            Text(
+              '#${order.orderNumber}',
+              style: ZolyaTypography.body.copyWith(color: mutedColor),
+            ),
+            const SizedBox(height: ZolyaSpacing.lg),
+            for (var i = 0; i < steps.length; i++)
+              _TrackStepRow(
+                step: steps[i],
+                done: i <= current,
+                active: i == current,
+                isLast: i == steps.length - 1,
+                scheme: scheme,
+                mutedColor: mutedColor,
+              ),
+            const SizedBox(height: ZolyaSpacing.md),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TrackStepRow extends StatelessWidget {
+  const _TrackStepRow({
+    required this.step,
+    required this.done,
+    required this.active,
+    required this.isLast,
+    required this.scheme,
+    required this.mutedColor,
+  });
+  final _TrackStep step;
+  final bool done;
+  final bool active;
+  final bool isLast;
+  final ColorScheme scheme;
+  final Color mutedColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final dotColor = done ? scheme.primary : scheme.surfaceContainerHighest;
+    final iconColor = done ? scheme.onPrimary : mutedColor;
+    final labelColor = done ? scheme.onSurface : mutedColor;
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: dotColor,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(step.icon, size: 18, color: iconColor),
+              ),
+              if (!isLast)
+                Expanded(
+                  child: Container(
+                    width: 2,
+                    color: done ? scheme.primary : scheme.surfaceContainerHighest,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(width: ZolyaSpacing.md),
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: ZolyaSpacing.md),
+            child: Text(
+              step.label,
+              style: (active
+                      ? ZolyaTypography.subtitle
+                      : ZolyaTypography.body)
+                  .copyWith(
+                color: labelColor,
+                fontWeight: active ? FontWeight.w700 : null,
               ),
             ),
           ),

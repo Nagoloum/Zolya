@@ -11,6 +11,7 @@ export 'zolya_chip.dart';
 export 'zolya_dialog.dart';
 export 'zolya_divider.dart';
 export 'zolya_empty_state.dart';
+export 'zolya_glass.dart';
 export 'zolya_gradient_card.dart';
 export 'zolya_list_tile.dart';
 export 'zolya_notification_bell.dart';

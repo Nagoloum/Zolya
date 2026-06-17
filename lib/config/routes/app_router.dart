@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'route_names.dart';
 import 'page_transition.dart';
+import '../../presentation/bloc/auth/auth_bloc.dart';
+import '../../presentation/bloc/auth/auth_state.dart';
 import '../../presentation/screens/splash/splash_screen.dart';
 import '../../presentation/screens/get_started/get_started_screen.dart';
 import '../../presentation/screens/auth/login_screen.dart';
@@ -44,9 +48,58 @@ import '../../presentation/screens/help/customer_service_screen.dart';
 import '../../presentation/screens/help/contact_us_screen.dart';
 import '../../presentation/screens/notifications/notification_preferences_screen.dart';
 
-final GoRouter appRouter = GoRouter(
+/// Préfixes de routes nécessitant une authentification.
+/// Tout ce qui touche au compte, à l'achat, à la vente et au portefeuille.
+const List<String> _protectedPrefixes = [
+  '/checkout',
+  '/orders',
+  '/profile',
+  '/favorites',
+  '/wallet',
+  '/offers',
+  '/sell',
+  '/addresses',
+  '/payment-methods',
+  '/settings',
+  '/notifications',
+  '/delivery',
+  '/invite',
+];
+
+bool _isProtected(String location) {
+  return _protectedPrefixes.any(
+    (p) => location == p || location.startsWith('$p/'),
+  );
+}
+
+/// Relaye les changements d'état d'AuthBloc à GoRouter pour réévaluer
+/// les redirections (ex: après connexion/déconnexion).
+class _AuthRefreshNotifier extends ChangeNotifier {
+  _AuthRefreshNotifier(AuthBloc bloc) {
+    _sub = bloc.stream.listen((_) => notifyListeners());
+  }
+  late final StreamSubscription<AuthState> _sub;
+
+  @override
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
+  }
+}
+
+GoRouter createAppRouter(AuthBloc authBloc) => GoRouter(
   initialLocation: RouteNames.splash,
   debugLogDiagnostics: false,
+  refreshListenable: _AuthRefreshNotifier(authBloc),
+  redirect: (context, state) {
+    final loggedIn = authBloc.state is AuthAuthenticated;
+    final location = state.matchedLocation;
+    if (!loggedIn && _isProtected(location)) {
+      final from = Uri.encodeComponent(state.uri.toString());
+      return '${RouteNames.login}?from=$from';
+    }
+    return null;
+  },
   routes: [
     GoRoute(
       path: RouteNames.splash,

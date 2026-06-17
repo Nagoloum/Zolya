@@ -33,6 +33,7 @@ abstract class AppStrings {
   String get loginCta;
   String get signInWithGoogle;
   String get signInWithApple;
+  String get featureComingSoon;
   String get forgotPassword;
   String get noAccount;
   String get signUp;
@@ -49,6 +50,8 @@ abstract class AppStrings {
   String get resetCodeIntro;
   String get resetCodeResendQuestion;
   String get resetCodeResendLink;
+  String get resetCodeResent;
+  String resendCodeIn(int seconds);
   String get resetPasswordTitle;
   String get resetPasswordIntro;
   String get newPasswordLabel;
@@ -143,6 +146,8 @@ abstract class AppStrings {
   String get checkoutSuccessTitle;
   String get checkoutSuccessMessage;
   String get checkoutTrackOrder;
+  String get checkoutErrorGeneric;
+  String get checkoutErrorNoPayment;
 
   String get addressTitle;
   String get addressSaved;
@@ -415,4 +420,7 @@ abstract class AppStrings {
   String get orderDetailDelivery;
   String get orderDetailTotal;
   String get orderDetailTrackOrder;
+  String get orderTrackingTitle;
+  String get orderTrackingPreparing;
+  String get orderTrackingDeliveredHint;
 }

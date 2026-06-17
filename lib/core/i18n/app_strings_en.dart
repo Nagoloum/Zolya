@@ -36,6 +36,7 @@ class AppStringsEn implements AppStrings {
   @override String get loginCta => 'Log In';
   @override String get signInWithGoogle => 'Sign In with Google';
   @override String get signInWithApple => 'Sign In with Apple';
+  @override String get featureComingSoon => 'Coming soon';
   @override String get forgotPassword => 'Forgot password?';
   @override String get noAccount => "Don't have an account? ";
   @override String get signUp => 'Sign Up';
@@ -52,6 +53,8 @@ class AppStringsEn implements AppStrings {
   @override String get resetCodeIntro => 'Enter the 5 digit code you received on your phone';
   @override String get resetCodeResendQuestion => 'Code not received?';
   @override String get resetCodeResendLink => 'Resend code';
+  @override String get resetCodeResent => 'A new code has been sent';
+  @override String resendCodeIn(int seconds) => 'Resend in ${seconds}s';
   @override String get resetPasswordTitle => 'Reset Password';
   @override String get resetPasswordIntro => 'Set a new password for your account so you can log in and access all features.';
   @override String get newPasswordLabel => 'Password';
@@ -145,6 +148,8 @@ class AppStringsEn implements AppStrings {
   @override String get checkoutSuccessTitle => 'Congratulations!';
   @override String get checkoutSuccessMessage => 'Your order has been placed.';
   @override String get checkoutTrackOrder => 'Track Your Order';
+  @override String get checkoutErrorGeneric => 'Payment failed. Please try again.';
+  @override String get checkoutErrorNoPayment => 'Please select a payment method.';
 
   @override String get addressTitle => 'Address';
   @override String get addressSaved => 'Saved Address';
@@ -442,4 +447,7 @@ class AppStringsEn implements AppStrings {
   @override String get orderDetailDelivery => 'Delivery';
   @override String get orderDetailTotal => 'Total';
   @override String get orderDetailTrackOrder => 'Track order';
+  @override String get orderTrackingTitle => 'Order tracking';
+  @override String get orderTrackingPreparing => 'Preparing your order';
+  @override String get orderTrackingDeliveredHint => 'Your order has been delivered.';
 }
